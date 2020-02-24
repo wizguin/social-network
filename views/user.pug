@@ -1,0 +1,105 @@
+extends layout
+
+block content
+  #cover
+  .container
+
+    //- User avatar is default if unset
+    .avatar-lg#avatar-profile
+      if userData.avatar
+        img(src=`/images/avatar/${userData.avatar}.webp`)
+      else
+        img(src='/images/avatar/default.webp')
+
+    .h2#profile-name @#{userData.username}
+
+    //- Determine button type for user profile, settings/unfollow/follow
+    if isMyUser
+      button.btn.btn-primary#profile-settings-button(type='button') Settings
+    else if user.isFollowing
+      button.btn.btn-danger#profile-follow-button(type='button', data-action='unfollow') Unfollow
+    else
+      button.btn.btn-success#profile-follow-button(type='button', data-action='follow') Follow
+
+    #profile-sidebar
+      .p.mb-3 #{userData.bio}
+      p
+        a.text-primary(href='#') #{userData.followerCount} Followers
+      p
+        a.text-primary(href='#') #{userData.followingCount} Following
+      p
+        a.text-primary(href='#') #{userData.likeCount} Likes
+
+      //- The user will be able to make posts from their own profile page
+      if isMyUser
+        .h4.float-left.mt-3 New Post
+        .form-group
+          label(for='exampleFormControlTextarea1')
+          textarea#exampleFormControlTextarea1.form-control(rows='5')
+          button.btn.btn-primary.mr-1.mt-1(type='button') Image
+          button.btn.btn-primary.mt-1(type='button') Post
+
+    #profile-posts
+      .card-header.mt-5
+        ul.nav.nav-tabs.card-header-tabs
+          li.nav-item
+            a.nav-link.active(href='#') Posts
+          li.nav-item
+            a.nav-link(href='#') Likes
+      .card-body
+
+        //- .post.container
+        //-   .avatar-sm
+        //-     img(src='/images/cat.png')
+        //-   .h6 @harry
+        //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
+        //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
+        //-     .btn-group.mr-2(role='group', aria-label='First group')
+        //-       button.btn.btn-outline-primary(type='button') Comment
+        //-       button.btn.btn-outline-primary(type='button') Like
+        //-       button.btn.btn-outline-primary(type='button') Repost
+        //-     .btn-group(role='group', aria-label='Second group')
+        //-       button.btn.btn-outline-secondary(type='button') 10m
+        //- hr
+
+        //- .post.container
+        //-   .avatar-sm
+        //-     img(src='/images/cat.png')
+        //-   .h6 @harry
+        //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
+        //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
+        //-     .btn-group.mr-2(role='group', aria-label='First group')
+        //-       button.btn.btn-outline-primary(type='button') Comment
+        //-       button.btn.btn-outline-primary(type='button') Like
+        //-       button.btn.btn-outline-primary(type='button') Repost
+        //-     .btn-group(role='group', aria-label='Second group')
+        //-       button.btn.btn-outline-secondary(type='button') 10m
+        //- hr
+
+        //- .post.container
+        //-   .avatar-sm
+        //-     img(src='/images/cat.png')
+        //-   .h6 @harry
+        //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
+        //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
+        //-     .btn-group.mr-2(role='group', aria-label='First group')
+        //-       button.btn.btn-outline-primary(type='button') Comment
+        //-       button.btn.btn-outline-primary(type='button') Like
+        //-       button.btn.btn-outline-primary(type='button') Repost
+        //-     .btn-group(role='group', aria-label='Second group')
+        //-       button.btn.btn-outline-secondary(type='button') 10m
+        //- hr
+
+        //- .post.container
+        //-   .avatar-sm
+        //-     img(src='/images/cat.png')
+        //-   .h6 @harry
+        //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
+        //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
+        //-     .btn-group.mr-2(role='group', aria-label='First group')
+        //-       button.btn.btn-outline-primary(type='button') Comment
+        //-       button.btn.btn-outline-primary(type='button') Like
+        //-       button.btn.btn-outline-primary(type='button') Repost
+        //-     .btn-group(role='group', aria-label='Second group')
+        //-       button.btn.btn-outline-secondary(type='button') 10m
+        //- hr

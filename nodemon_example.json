@@ -1,0 +1,10 @@
+{
+  "env": {
+    "SESSION_SECRET": "secret",
+    "DATABASE": "database",
+    "USER": "user",
+    "PASSWORD": "password",
+    "HOST": "localhost",
+    "DIALECT": "mysql"
+  }
+}

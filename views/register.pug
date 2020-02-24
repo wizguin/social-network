@@ -1,0 +1,35 @@
+doctype html
+html
+
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='/javascripts/jquery-3.4.1.min.js')
+    script(src='/javascripts/bootstrap.min.js')
+
+  body
+    .login-container
+      h1 Sign Up
+      form.mt-4(action='/register', method='post')
+        .form-group
+          input#exampleInputPassword1.form-control(type='text', placeholder='Username', name='username')
+        .form-group
+          input#exampleInputEmail1.form-control(type='email', aria-describedby='emailHelp', placeholder='Email Address', name='email')
+        .form-group
+          input#exampleInputPassword1.form-control(type='password', placeholder='Password', name='password')
+        .form-group
+          input#exampleInputPassword1.form-control(type='password', placeholder='Repeat Password', name='passwordRepeat')
+        button.btn.btn-primary.btn-lg(type='submit') Sign Up
+        a(href='login') Already have an account? Log in.
+
+      if error
+        .alert.alert-danger.mt-3(role='alert')
+          | #{error}
+
+      if newAccount
+        .alert.alert-success.mt-3(role='alert')
+          | Account created successfully,
+          |
+          a(href='login') Log in.
+
