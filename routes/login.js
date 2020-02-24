@@ -33,8 +33,6 @@ router.post('/', [
         .isLength({ min: 6, max: 20 })
 
 ], function(req, res) {
-    console.log(req.session)
-    console.log(req.body.username, req.body.password)
     let errors = validationResult(req)
 
     if (!errors.isEmpty()) {

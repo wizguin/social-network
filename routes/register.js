@@ -22,7 +22,6 @@ router.post('/', [
         .custom(value => {
             return database.findByUsername(value).then(user => {
                 if (user) {
-                    console.log(user)
                     return Promise.reject('That username is already in use.')
                 }
             })
@@ -38,7 +37,6 @@ router.post('/', [
         .custom(value => {
             return database.findByEmail(value).then(user => {
                 if (user) {
-                    console.log(user)
                     return Promise.reject('That email is already in use.')
                 }
             })
