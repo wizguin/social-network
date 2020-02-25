@@ -11,10 +11,13 @@ router.get('/:username', async function(req, res) {
 
     if (!user) return res.redirect('/home')
 
-    user.posts = []
+    let followers = []
+    let following = await database.getFollowings(user.id)
+
+    user.posts = await database.getPosts(user.id)
     user.likes = []
     user.followerCount = 0
-    user.followingCount = 0
+    user.followingCount = following.length
     user.likeCount = 0
     if (!isMyUser) user.isFollowing = await database.isFollowing(req.session.userId, user.id)
 
@@ -34,16 +37,13 @@ router.post('/:username/follow', async function(req, res) {
     let profileId = await database.usernameToId(req.params.username)
     let isFollowing = await database.isFollowing(req.session.userId, profileId)
 
-    if (!isMyUser && !isFollowing) {
-        database.followings.create({
-            userId: req.session.userId,
-            followingId:  profileId
-        })
-        res.sendStatus(200)
+    if (isMyUser || isFollowing) return res.sendStatus(202)
 
-    } else {
-        res.sendStatus(202)
-    }
+    database.followings.create({
+        userId: req.session.userId,
+        followingId:  profileId
+    })
+    res.sendStatus(200)
 })
 
 router.post('/:username/unfollow', async function(req, res) {
@@ -51,18 +51,25 @@ router.post('/:username/unfollow', async function(req, res) {
     let profileId = await database.usernameToId(req.params.username)
     let isFollowing = await database.isFollowing(req.session.userId, profileId)
 
-    if (!isMyUser && isFollowing) {
-        database.followings.destroy({
-            where: {
-                userId: req.session.userId,
-                followingId:  profileId
-            }
-        })
-        res.sendStatus(200)
+    if (isMyUser || !isFollowing) return res.sendStatus(202)
 
-    } else {
-        res.sendStatus(202)
-    }
+    database.followings.destroy({
+        where: {
+            userId: req.session.userId,
+            followingId:  profileId
+        }
+    })
+    res.sendStatus(200)
+})
+
+router.post('/:username/post', function(req, res) {
+    let isMyUser = (req.params.username == req.session.username) ? true : false
+
+    if (!isMyUser) return res.sendStatus(202)
+
+    console.log(req.formData)
+
+    res.sendStatus(200)
 })
 
 module.exports = router

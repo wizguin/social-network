@@ -2,6 +2,7 @@ import Sequelize from 'sequelize'
 // Tables
 import Users from './tables/Users'
 import Followings from './tables/Followings'
+import Posts from './tables/Posts'
 
 
 export default class Database {
@@ -19,18 +20,22 @@ export default class Database {
         // Tables
         this.users = Users.init(this.sequelize, Sequelize)
         this.followings = Followings.init(this.sequelize, Sequelize)
+        this.posts = Posts.init(this.sequelize, Sequelize)
 
         // Associations
-        this.users.hasMany(this.followings, { foreignKey: 'id' })
-        this.followings.belongsTo(this.users, { foreignKey: 'userId' })
-        this.followings.belongsTo(this.users, { foreignKey: 'followingId' })
+        // this.users.hasMany(this.followings, { foreignKey: 'id' })
+        // this.followings.belongsTo(this.users, { foreignKey: 'userId' })
+        // this.followings.belongsTo(this.users, { foreignKey: 'followingId' })
+
+        // this.users.hasMany(this.posts, { foreignKey: 'id '})
+        // this.posts.belongsTo(this.users, { foreignKey: 'userId' })
 
         this.sequelize
             .authenticate()
-            .then(() => {
+            .then(function() {
                 console.log('Connected to database')
             })
-            .catch(error => {
+            .catch(function(error) {
                 console.error('Unable to connect to the database: ', error)
             })
     }
@@ -38,7 +43,7 @@ export default class Database {
     /*========== User data find functions ==========*/
 
     findByUsername(username) {
-        return this.users.findOne({ where: { username: username } }).then((userData) => {
+        return this.users.findOne({ where: { username: username } }).then(function(userData) {
             if (userData) {
                 return userData
             } else {
@@ -48,7 +53,7 @@ export default class Database {
     }
 
     findByEmail(email) {
-        return this.users.findOne({ where: { email: email } }).then((userData) => {
+        return this.users.findOne({ where: { email: email } }).then(function(userData) {
             if (userData) {
                 return userData
             } else {
@@ -58,7 +63,7 @@ export default class Database {
     }
 
     findById(id) {
-        return this.users.findOne({ where: { id: id } }).then((userData) => {
+        return this.users.findOne({ where: { id: id } }).then(function(userData) {
             if (userData) {
                 return userData
             } else {
@@ -68,19 +73,23 @@ export default class Database {
     }
 
     usernameToId(username) {
-        return this.findByUsername(username).then(userData => {
+        return this.findByUsername(username).then(function(userData) {
             return (userData.id)
         })
     }
 
-    /*==========  ==========*/
+    /*========== Helper functions ==========*/
+
+    getTimestamp() {
+        return Math.round((new Date()).getTime() / 1000)
+    }
 
     getFollowings(id) {
-        return this.followings.findAll({ where: { userId: id } }).then(following => {
+        return this.followings.findAll({ where: { userId: id } }).then(function(result) {
             let followings = []
 
-            for (let result of following) {
-                followings.push(result.followingId)
+            for (let following of result) {
+                followings.push(following.followingId)
             }
 
             return followings
@@ -88,8 +97,24 @@ export default class Database {
     }
 
     isFollowing(id, followingId) {
-        return this.getFollowings(id).then(followings => {
+        return this.getFollowings(id).then(function(followings) {
             return (followings.includes(followingId)) ? true : false
+        })
+    }
+
+    getPosts(id) {
+        return this.posts.findAll({ where: { userId: id }, order: [['timestamp', 'DESC']] }).then(function(result) {
+            let posts = []
+
+            for (let post of result) {
+                posts.push({
+                    text: post.text,
+                    image: post.image,
+                    timestamp: post.timestamp
+                })
+            }
+
+            return posts
         })
     }
 

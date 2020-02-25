@@ -13,42 +13,36 @@ router.get('/', function(req, res) {
 })
 
 router.post('/', [
-    // Validate username
     check('username', 'Enter a username (1-12 characters).')
         .trim()
         .escape()
         .isLength({ min: 1, max: 12 })
         // Checking if username already exists in the database
-        .custom(value => {
-            return database.findByUsername(value).then(user => {
-                if (user) {
-                    return Promise.reject('That username is already in use.')
-                }
+        .custom(function(value) {
+            return database.findByUsername(value).then(function(user) {
+                if (user) return Promise.reject('That username is already in use.')
             })
         }),
 
-    // Validate email address
     check('email', 'Enter a valid email address.')
         .trim()
         .escape()
+        .isLength({ min: 1, max: 254 })
         .isEmail()
         .normalizeEmail()
-        // Checking if username already exists in the database
-        .custom(value => {
-            return database.findByEmail(value).then(user => {
-                if (user) {
-                    return Promise.reject('That email is already in use.')
-                }
+        // Checking if email address already exists in the database
+        .custom(function(value) {
+            return database.findByEmail(value).then(function(user) {
+                if (user) return Promise.reject('That email address is already in use.')
             })
         }),
 
-    // Validate password
     check('password', 'Enter a password (6-20 characters).')
         .trim()
         .escape()
         .isLength({ min: 6, max: 20 })
         // Checking if passwords match
-        .custom((value, {req}) => {
+        .custom(function (value, {req}) {
             if (value !== req.body.passwordRepeat) {
                 throw new Error('Passwords must match.')
             } else {
@@ -59,26 +53,23 @@ router.post('/', [
 ], function(req, res) {
     let errors = validationResult(req)
 
-    if (!errors.isEmpty()) {
-        res.render('register', { title: 'Sign Up', error: errors.array()[0].msg })
+    // Return error messages to the user
+    if (!errors.isEmpty()) return res.render('register', { title: 'Sign Up', error: errors.array()[0].msg })
 
-    } else {
-        // Create new user if form validates successfully
-        bcrypt.hash(req.body.password, saltRounds, function(error, hash) {
-            if (error) {
-                res.render('register', { title: 'Sign Up', error: error })
-            } else {
-                database.users.create({
-                    username: req.body.username,
-                    email:  req.body.email,
-                    password: hash,
-                    registrationTimestamp: Math.round((new Date()).getTime() / 1000)
-                })
+    // Create new user if form validates successfully
+    bcrypt.hash(req.body.password, saltRounds, function(error, hash) {
+        if (error) return res.render('register', { title: 'Sign Up', error: error })
 
-                res.render('register', { title: 'Sign Up', newAccount: true })
-            }
+        database.users.create({
+            username: req.body.username,
+            email:  req.body.email,
+            password: hash,
+            registrationTimestamp: database.getTimestamp()
         })
-    }
+
+        res.render('register', { title: 'Sign Up', newAccount: true })
+    })
+
 })
 
 module.exports = router

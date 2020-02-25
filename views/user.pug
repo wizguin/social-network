@@ -1,16 +1,13 @@
 extends layout
 
 block content
+
+  - var avatar = (userData.avatar) ? userData.avatar : 'default'
+
   #cover
   .container
-
-    //- User avatar is default if unset
     .avatar-lg#avatar-profile
-      if userData.avatar
-        img(src=`/images/avatar/${userData.avatar}.webp`)
-      else
-        img(src='/images/avatar/default.webp')
-
+      img(src=`/images/avatar/${avatar}.webp`)
     .h2#profile-name @#{userData.username}
 
     //- Determine button type for user profile, settings/unfollow/follow
@@ -22,84 +19,42 @@ block content
       button.btn.btn-success#profile-follow-button(type='button', data-action='follow') Follow
 
     #profile-sidebar
-      .p.mb-3 #{userData.bio}
-      p
-        a.text-primary(href='#') #{userData.followerCount} Followers
-      p
-        a.text-primary(href='#') #{userData.followingCount} Following
-      p
-        a.text-primary(href='#') #{userData.likeCount} Likes
+      .p #{userData.bio}
+
 
       //- The user will be able to make posts from their own profile page
       if isMyUser
         .h4.float-left.mt-3 New Post
-        .form-group
-          label(for='exampleFormControlTextarea1')
-          textarea#exampleFormControlTextarea1.form-control(rows='5')
-          button.btn.btn-primary.mr-1.mt-1(type='button') Image
-          button.btn.btn-primary.mt-1(type='button') Post
+        form(action=`/user/${myUsername}/post`, method='post', id='post-form')
+          .form-group
+            textarea.form-control(rows='5', name='postText')
+            button.btn.btn-primary.mr-1.mt-1(type='button') Image
+            button.btn.btn-primary.mt-1(type='submit') Post
 
     #profile-posts
       .card-header.mt-5
         ul.nav.nav-tabs.card-header-tabs
           li.nav-item
-            a.nav-link.active(href='#') Posts
+            a.nav-link.active(href='#') #{user.posts.length} Posts
           li.nav-item
-            a.nav-link(href='#') Likes
+            a.nav-link(href='#') 0  Likes
+          li.nav-item
+            a.nav-link(href='#') 0 Followers
+          li.nav-item
+            a.nav-link(href='#') #{user.followingCount}  Following
+
       .card-body
-
-        //- .post.container
-        //-   .avatar-sm
-        //-     img(src='/images/cat.png')
-        //-   .h6 @harry
-        //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-        //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-        //-     .btn-group.mr-2(role='group', aria-label='First group')
-        //-       button.btn.btn-outline-primary(type='button') Comment
-        //-       button.btn.btn-outline-primary(type='button') Like
-        //-       button.btn.btn-outline-primary(type='button') Repost
-        //-     .btn-group(role='group', aria-label='Second group')
-        //-       button.btn.btn-outline-secondary(type='button') 10m
-        //- hr
-
-        //- .post.container
-        //-   .avatar-sm
-        //-     img(src='/images/cat.png')
-        //-   .h6 @harry
-        //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-        //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-        //-     .btn-group.mr-2(role='group', aria-label='First group')
-        //-       button.btn.btn-outline-primary(type='button') Comment
-        //-       button.btn.btn-outline-primary(type='button') Like
-        //-       button.btn.btn-outline-primary(type='button') Repost
-        //-     .btn-group(role='group', aria-label='Second group')
-        //-       button.btn.btn-outline-secondary(type='button') 10m
-        //- hr
-
-        //- .post.container
-        //-   .avatar-sm
-        //-     img(src='/images/cat.png')
-        //-   .h6 @harry
-        //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-        //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-        //-     .btn-group.mr-2(role='group', aria-label='First group')
-        //-       button.btn.btn-outline-primary(type='button') Comment
-        //-       button.btn.btn-outline-primary(type='button') Like
-        //-       button.btn.btn-outline-primary(type='button') Repost
-        //-     .btn-group(role='group', aria-label='Second group')
-        //-       button.btn.btn-outline-secondary(type='button') 10m
-        //- hr
-
-        //- .post.container
-        //-   .avatar-sm
-        //-     img(src='/images/cat.png')
-        //-   .h6 @harry
-        //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-        //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-        //-     .btn-group.mr-2(role='group', aria-label='First group')
-        //-       button.btn.btn-outline-primary(type='button') Comment
-        //-       button.btn.btn-outline-primary(type='button') Like
-        //-       button.btn.btn-outline-primary(type='button') Repost
-        //-     .btn-group(role='group', aria-label='Second group')
-        //-       button.btn.btn-outline-secondary(type='button') 10m
-        //- hr
+        each post in user.posts
+          .post.container
+            .avatar-sm
+              img(src=`/images/avatar/${avatar}.webp`)
+            .h6 @#{userData.username}
+            p #{post.text}
+            .btn-toolbar(role='toolbar')
+              .btn-group.mr-2(role='group')
+                button.btn.btn-outline-primary(type='button') Comment
+                button.btn.btn-outline-primary(type='button') Like
+                button.btn.btn-outline-primary(type='button') Repost
+              .btn-group(role='group')
+                button.btn.btn-outline-secondary(type='button') #{post.timestamp}
+          hr

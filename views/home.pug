@@ -1,25 +1,26 @@
 extends layout
 
 block content
-  #sidebar.border-right
 
+  - var avatar = (user.avatar) ? user.avatar : 'default'
+
+  #sidebar.border-right
     .container.float-left.mb-3
-      .avatar-md.float-left.mr-3
-        if user.avatar
-          img(src=`/images/avatar/${user.avatar}.webp`)
-        else
-          img(src='/images/avatar/default.webp')
+      a(href=`/user/${myUsername}`)
+        .avatar-md.float-left.mr-3
+          img(src=`/images/avatar/${avatar}.webp`)
 
       .h5.mt-3.mb-2 @#{user.username}
       button.btn.btn-primary.mt-2(type='button') Settings
+      button.btn.btn-danger.mt-2(type='button' onclick='location.href=\'/logout\'') Logout
 
     .container.float-left
       .h4.float-left New Post
-      .form-group
-        label(for='exampleFormControlTextarea1')
-        textarea#exampleFormControlTextarea1.form-control(rows='5')
-        button.btn.btn-primary.mr-1.mt-1(type='button') Image
-        button.btn.btn-primary.mt-1(type='button') Post
+      form(action='/home/post', method='post', id='post-form')
+        .form-group
+          textarea.form-control(rows='5', name='postText')
+          button.btn.btn-primary.mr-1.mt-1(type='button') Image
+          button.btn.btn-primary.mt-1(type='submit') Post
 
   #feed
 

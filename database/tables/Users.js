@@ -14,17 +14,17 @@ export default class Users extends Sequelize.Model {
                     field: 'id'
                 },
                 username: {
-                    type: DataTypes.TEXT,
+                    type: DataTypes.STRING(12),
                     allowNull: false,
                     field: 'username'
                 },
                 password: {
-                    type: DataTypes.TEXT,
+                    type: DataTypes.CHAR(60),
                     allowNull: false,
                     field: 'password'
                 },
                 email: {
-                    type: DataTypes.TEXT,
+                    type: DataTypes.STRING(254),
                     allowNull: false,
                     field: 'email'
                 },
@@ -47,24 +47,6 @@ export default class Users extends Sequelize.Model {
                     type: DataTypes.TEXT,
                     allowNull: true,
                     field: 'header'
-                },
-                followerCount: {
-                    type: DataTypes.INTEGER(11),
-                    allowNull: false,
-                    defaultValue: '0',
-                    field: 'follower_count'
-                },
-                followingCount: {
-                    type: DataTypes.INTEGER(11),
-                    allowNull: false,
-                    defaultValue: '0',
-                    field: 'following_count'
-                },
-                likeCount: {
-                    type: DataTypes.INTEGER(11),
-                    allowNull: false,
-                    defaultValue: '0',
-                    field: 'like_count'
                 }
             },
             { sequelize, timestamps: false }

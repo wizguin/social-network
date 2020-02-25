@@ -12,49 +12,36 @@ router.get('/', function(req, res) {
 })
 
 router.post('/', [
-    // Validate username
     check('username', 'Enter a username (1-12 characters).')
         .trim()
         .escape()
         .isLength({ min: 1, max: 12 })
-        // Checking if username exists in the database
-        .custom(value => {
-            return database.findByUsername(value).then(user => {
-                if (!user) {
-                    return Promise.reject('That user does not exist.')
-                }
+        .custom(function(value) {
+            return database.findByUsername(value).then(function(user) {
+                if (!user) return Promise.reject('That user does not exist.')
             })
         }),
 
-    // Validate password
     check('password', 'Enter a password (6-20 characters).')
         .trim()
         .escape()
         .isLength({ min: 6, max: 20 })
 
-], function(req, res) {
+], async function(req, res) {
     let errors = validationResult(req)
+    if (!errors.isEmpty()) return res.render('login', { title: 'Login', error: errors.array()[0].msg })
 
-    if (!errors.isEmpty()) {
-        res.render('login', { title: 'Login', error: errors.array()[0].msg })
+    let user = await database.findByUsername(req.body.username)
 
-    } else {
-        // Compare passwords if form validates successfully
-        database.findByUsername(req.body.username).then(user => {
-            bcrypt.compare(req.body.password, user.password, function(error, result) {
-                if (result) {
-                    // Set sesion variables
-                    req.session.userId = user.id
-                    req.session.username = user.username
+    bcrypt.compare(req.body.password, user.password, function(error, result) {
+        if (error || !result) return res.render('login', { title: 'Login', error: 'Incorrect password.' })
 
-                    res.redirect('/home')
+        // Set sesion variables
+        req.session.userId = user.id
+        req.session.username = user.username
 
-                } else {
-                    res.render('login', { title: 'Login', error: 'Incorrect password.' })
-                }
-            })
-        })
-    }
+        res.redirect('/home')
+    })
 })
 
 module.exports = router

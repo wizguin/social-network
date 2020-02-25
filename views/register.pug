@@ -13,13 +13,13 @@ html
       h1 Sign Up
       form.mt-4(action='/register', method='post')
         .form-group
-          input#exampleInputPassword1.form-control(type='text', placeholder='Username', name='username')
+          input.form-control(type='text', placeholder='Username', name='username')
         .form-group
-          input#exampleInputEmail1.form-control(type='email', aria-describedby='emailHelp', placeholder='Email Address', name='email')
+          input.form-control(type='email', aria-describedby='emailHelp', placeholder='Email Address', name='email')
         .form-group
-          input#exampleInputPassword1.form-control(type='password', placeholder='Password', name='password')
+          input.form-control(type='password', placeholder='Password', name='password')
         .form-group
-          input#exampleInputPassword1.form-control(type='password', placeholder='Repeat Password', name='passwordRepeat')
+          input.form-control(type='password', placeholder='Repeat Password', name='passwordRepeat')
         button.btn.btn-primary.btn-lg(type='submit') Sign Up
         a(href='login') Already have an account? Log in.
 
