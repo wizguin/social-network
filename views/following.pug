@@ -1,0 +1,13 @@
+extends user
+
+block profileContent
+
+    .card-body
+      each item in profile.content
+        .post.container.mb-5
+          a(href=`/user/${item.username}`)
+            .avatar-sm
+              img(src=`/images/avatar/${(item.avatar) ? item.avatar : 'default'}.webp`)
+          .h6
+            a(href=`/user/${item.username}`) @#{item.username}
+        hr

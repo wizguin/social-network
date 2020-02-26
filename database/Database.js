@@ -42,7 +42,7 @@ export default class Database {
             })
     }
 
-    /*========== User data find functions ==========*/
+    /*========== User data find queries ==========*/
 
     findByUsername(username) {
         return this.users.findOne({ where: { username: username } }).then(function(userData) {
@@ -80,49 +80,7 @@ export default class Database {
         })
     }
 
-    /*========== Helper functions ==========*/
-
-    getTimestamp() {
-        return Math.round((new Date()).getTime() / 1000)
-    }
-
-    timestampToDate(timestamp) {
-        return new Date(timestamp * 1000).toLocaleString()
-    }
-
-    getFollowings(id) {
-        return this.followings.findAll({ where: { userId: id } }).then(function(result) {
-            let followings = []
-
-            for (let following of result) {
-                followings.push(following.followingId)
-            }
-
-            return followings
-        })
-    }
-
-    getFollowers(id) {
-
-    }
-
-    getFollowingCount(id) {
-        return this.followings.count({ where: { userId: id } }).then(function(result) {
-            return result
-        })
-    }
-
-    getFollowerCount(id) {
-        return this.followings.count({ where: { followingId: id } }).then(function(result) {
-            return result
-        })
-    }
-
-    isFollowing(id, followingId) {
-        return this.followings.findOne({ where: { userId: id, followingId: followingId } }).then(function(result) {
-            return (result) ? true : false
-        })
-    }
+    /*========== Profile page queries ==========*/
 
     getPosts(id) {
         return this.posts.findAll({ where: { userId: id }, order: [['timestamp', 'DESC']] }).then((result) => {
@@ -140,6 +98,12 @@ export default class Database {
         })
     }
 
+    getPostCount(id) {
+        return this.posts.count({ where: { userId: id } }).then(function(result) {
+            return result
+        })
+    }
+
     getLikes(id) {
         return this.likes.findAll({ where: { userId: id }, order: [['timestamp', 'DESC']] }).then(function(result) {
             let likes = []
@@ -148,7 +112,75 @@ export default class Database {
                 likes.push(like.postId)
             }
 
-            return posts
+            return likes
+        })
+    }
+
+    getLikeCount(id) {
+        return this.likes.count({ where: { userId: id } }).then(function(result) {
+            return result
+        })
+    }
+
+    getFollowers(id) {
+        return this.followings.findAll({ where: { followingId: id } }).then(async (result) => {
+            let followers = []
+
+            for (let follower of result) {
+                let user = await this.findById(follower.userId)
+
+                followers.push({
+                    username: user.username,
+                    avatar: user.avatar
+                })
+            }
+
+            return followers
+        })
+    }
+
+    getFollowerCount(id) {
+        return this.followings.count({ where: { followingId: id } }).then(function(result) {
+            return result
+        })
+    }
+
+    getFollowings(id) {
+        return this.followings.findAll({ where: { userId: id } }).then(async (result) => {
+            let followings = []
+
+            for (let following of result) {
+                let user = await this.findById(following.followingId)
+
+                followings.push({
+                    username: user.username,
+                    avatar: user.avatar
+                })
+            }
+
+            return followings
+        })
+    }
+
+    getFollowingCount(id) {
+        return this.followings.count({ where: { userId: id } }).then(function(result) {
+            return result
+        })
+    }
+
+    /*========== Helper functions ==========*/
+
+    getTimestamp() {
+        return Math.round((new Date()).getTime() / 1000)
+    }
+
+    timestampToDate(timestamp) {
+        return new Date(timestamp * 1000).toLocaleString()
+    }
+
+    isFollowing(id, followingId) {
+        return this.followings.findOne({ where: { userId: id, followingId: followingId } }).then(function(result) {
+            return (result) ? true : false
         })
     }
 

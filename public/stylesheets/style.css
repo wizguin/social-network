@@ -78,6 +78,10 @@ hr {
     margin-top: 0px;
 }
 
+.post a {
+    color: black;
+}
+
 .post .avatar-sm {
     float: left;
     position: absolute;

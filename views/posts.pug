@@ -1,0 +1,21 @@
+extends user
+
+block profileContent
+
+    .card-body
+      each item in profile.content
+        .post.container
+          a(href=`/user/${profile.username}`)
+            .avatar-sm
+              img(src=`/images/avatar/${avatar}.webp`)
+          .h6
+            a(href=`/user/${profile.username}`) @#{profile.username}
+          p #{item.text}
+          table.postButtons
+            tbody
+              tr
+                td.i.far.fa-comment.comment-button
+                td.i.far.fa-heart.like-button(data-action='like')
+                td.i.fas.fa-retweet.repost-button
+                td #{item.timestamp}
+        hr

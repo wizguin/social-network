@@ -5,26 +5,58 @@ import Database from '../database/Database'
 const router = express.Router()
 const database = new Database()
 
-router.get('/:username', async function(req, res) {
+const contentTypes = {
+    'posts': database.getPosts.bind(database),
+    'likes': database.getLikes.bind(database),
+    'followers': database.getFollowers.bind(database),
+    'following': database.getFollowings.bind(database)
+}
+
+async function renderProfile(req, res, contentType, template = contentType) {
     let isMyUser = (req.params.username == req.session.username) ? true : false
     let user = await database.findByUsername(req.params.username)
 
     if (!user) return res.redirect('/home')
 
-    user.posts = await database.getPosts(user.id)
-    user.likes = []
-    user.followerCount = await database.getFollowerCount(user.id)
-    user.followingCount = await database.getFollowingCount(user.id)
-    user.likeCount = 0
-    if (!isMyUser) user.isFollowing = await database.isFollowing(req.session.userId, user.id)
+    let content = await contentTypes[contentType](user.id)
 
-    res.render('user', {
+    let profile = {
+        username: user.dataValues.username,
+        avatar: user.dataValues.avatar,
+        bio: user.dataValues.bio,
+        contentType: contentType,
+        content: content,
+        postCount: await database.getPostCount(user.id),
+        likeCount: await database.getLikeCount(user.id),
+        followerCount: await database.getFollowerCount(user.id),
+        followingCount: await database.getFollowingCount(user.id)
+    }
+    if (!isMyUser) profile.isFollowing = await database.isFollowing(req.session.userId, user.id)
+
+    res.render(template, {
         title: `@${req.params.username}`,
         myUsername: req.session.username,
         isMyUser: isMyUser,
-        user: user,
-        userData: user.dataValues
+        profile: profile
     })
+}
+
+/*========== Get routes ==========*/
+
+router.get('/:username', function(req, res) {
+    renderProfile(req, res, 'posts')
+})
+
+router.get('/:username/likes', function(req, res) {
+    renderProfile(req, res, 'likes', 'posts')
+})
+
+router.get('/:username/followers', function(req, res) {
+    renderProfile(req, res, 'followers')
+})
+
+router.get('/:username/following', function(req, res) {
+    renderProfile(req, res, 'following')
 })
 
 /*========== Post routes ==========*/

@@ -3,13 +3,14 @@ window.onload = function() {
     /*========== Profile page handlers ==========*/
 
     $('#profile-follow-button').click(function() {
-        let currentUrl = $(location).attr('href')
+        let currentUrl = window.location.pathname.split('/').filter(function(i) { return i })
+        let user = currentUrl[1]
         let action = $(this).data('action')
 
-        switch(action) {
+        switch (action) {
             case 'follow':
                 $.ajax({
-                    url: `${currentUrl}/follow`,
+                    url: `/user/${user}/follow`,
                     type: 'post',
                     success: () => {
                         $(this).addClass('btn-danger').removeClass('btn-success')
@@ -21,7 +22,7 @@ window.onload = function() {
 
             case 'unfollow':
                 $.ajax({
-                    url: `${currentUrl}/unfollow`,
+                    url: `/user/${user}/unfollow`,
                     type: 'post',
                     success: () => {
                         $(this).addClass('btn-success').removeClass('btn-danger')

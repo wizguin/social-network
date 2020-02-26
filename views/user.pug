@@ -2,26 +2,23 @@ extends layout
 
 block content
 
-  - var avatar = (userData.avatar) ? userData.avatar : 'default'
+  - var avatar = (profile.avatar) ? profile.avatar : 'default'
 
   #cover
   .container
     .avatar-lg#avatar-profile
       img(src=`/images/avatar/${avatar}.webp`)
-    .h2#profile-name @#{userData.username}
-
+    .h2#profile-name @#{profile.username}
     //- Determine button type for user profile, settings/unfollow/follow
     if isMyUser
       button.btn.btn-primary#profile-settings-button(type='button') Settings
-    else if user.isFollowing
+    else if profile.isFollowing
       button.btn.btn-danger#profile-follow-button(type='button', data-action='unfollow') Unfollow
     else
       button.btn.btn-success#profile-follow-button(type='button', data-action='follow') Follow
 
     #profile-sidebar
-      p #{userData.bio}
-
-
+      p #{profile.bio}
       //- The user will be able to make posts from their own profile page
       if isMyUser
         .h4.float-left New Post
@@ -33,28 +30,13 @@ block content
 
     #profile-posts
       .card-header.mt-5
+        mixin tab(href, count, name)
+          li.nav-item
+            a.nav-link(href=href, class=(profile.contentType == name.toLowerCase()) ? 'active' : '') #{count} #{name}
         ul.nav.nav-tabs.card-header-tabs
-          li.nav-item
-            a.nav-link.active(href='#') #{user.posts.length} Posts
-          li.nav-item
-            a.nav-link(href='#') 0  Likes
-          li.nav-item
-            a.nav-link(href='#') #{user.followerCount} Followers
-          li.nav-item
-            a.nav-link(href='#') #{user.followingCount} Following
+          +tab(`/user/${profile.username}`, profile.postCount, 'Posts')
+          +tab(`/user/${profile.username}/likes`, profile.likeCount, 'Likes')
+          +tab(`/user/${profile.username}/followers`, profile.followerCount, 'Followers')
+          +tab(`/user/${profile.username}/following`, profile.followingCount, 'Following')
 
-      .card-body
-        each post in user.posts
-          .post.container
-            .avatar-sm
-              img(src=`/images/avatar/${avatar}.webp`)
-            .h6 @#{userData.username}
-            p #{post.text}
-            table.postButtons
-              tbody
-                tr
-                  td.i.far.fa-comment.comment-button
-                  td.i.far.fa-heart.like-button(data-action='like')
-                  td.i.fas.fa-retweet.repost-button
-                  td #{post.timestamp}
-          hr
+      block profileContent
