@@ -9,6 +9,7 @@ import loginRouter from './routes/login'
 import registerRouter from './routes/register'
 import userRouter from './routes/user'
 import logutRouter from './routes/logout'
+import postRouter from './routes/post'
 
 
 const app = express()
@@ -67,6 +68,7 @@ app.use('/user', isLoggedIn, userRouter)
 app.use('/login', isLoggedOut, loginRouter)
 app.use('/logout', isLoggedIn, logutRouter)
 app.use('/register', isLoggedOut, registerRouter)
+app.use('/post', isLoggedIn, postRouter)
 
 
 // Catch 404 and forward to error handler

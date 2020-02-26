@@ -11,13 +11,10 @@ router.get('/:username', async function(req, res) {
 
     if (!user) return res.redirect('/home')
 
-    let followers = []
-    let following = await database.getFollowings(user.id)
-
     user.posts = await database.getPosts(user.id)
     user.likes = []
-    user.followerCount = 0
-    user.followingCount = following.length
+    user.followerCount = await database.getFollowerCount(user.id)
+    user.followingCount = await database.getFollowingCount(user.id)
     user.likeCount = 0
     if (!isMyUser) user.isFollowing = await database.isFollowing(req.session.userId, user.id)
 
@@ -59,16 +56,6 @@ router.post('/:username/unfollow', async function(req, res) {
             followingId:  profileId
         }
     })
-    res.sendStatus(200)
-})
-
-router.post('/:username/post', function(req, res) {
-    let isMyUser = (req.params.username == req.session.username) ? true : false
-
-    if (!isMyUser) return res.sendStatus(202)
-
-    console.log(req.formData)
-
     res.sendStatus(200)
 })
 

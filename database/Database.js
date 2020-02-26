@@ -3,6 +3,7 @@ import Sequelize from 'sequelize'
 import Users from './tables/Users'
 import Followings from './tables/Followings'
 import Posts from './tables/Posts'
+import Likes from './tables/Likes'
 
 
 export default class Database {
@@ -21,6 +22,7 @@ export default class Database {
         this.users = Users.init(this.sequelize, Sequelize)
         this.followings = Followings.init(this.sequelize, Sequelize)
         this.posts = Posts.init(this.sequelize, Sequelize)
+        this.likes = Likes.init(this.sequelize, Sequelize)
 
         // Associations
         // this.users.hasMany(this.followings, { foreignKey: 'id' })
@@ -84,6 +86,10 @@ export default class Database {
         return Math.round((new Date()).getTime() / 1000)
     }
 
+    timestampToDate(timestamp) {
+        return new Date(timestamp * 1000).toLocaleString()
+    }
+
     getFollowings(id) {
         return this.followings.findAll({ where: { userId: id } }).then(function(result) {
             let followings = []
@@ -96,22 +102,50 @@ export default class Database {
         })
     }
 
+    getFollowers(id) {
+
+    }
+
+    getFollowingCount(id) {
+        return this.followings.count({ where: { userId: id } }).then(function(result) {
+            return result
+        })
+    }
+
+    getFollowerCount(id) {
+        return this.followings.count({ where: { followingId: id } }).then(function(result) {
+            return result
+        })
+    }
+
     isFollowing(id, followingId) {
-        return this.getFollowings(id).then(function(followings) {
-            return (followings.includes(followingId)) ? true : false
+        return this.followings.findOne({ where: { userId: id, followingId: followingId } }).then(function(result) {
+            return (result) ? true : false
         })
     }
 
     getPosts(id) {
-        return this.posts.findAll({ where: { userId: id }, order: [['timestamp', 'DESC']] }).then(function(result) {
+        return this.posts.findAll({ where: { userId: id }, order: [['timestamp', 'DESC']] }).then((result) => {
             let posts = []
 
             for (let post of result) {
                 posts.push({
                     text: post.text,
                     image: post.image,
-                    timestamp: post.timestamp
+                    timestamp: this.timestampToDate(post.timestamp)
                 })
+            }
+
+            return posts
+        })
+    }
+
+    getLikes(id) {
+        return this.likes.findAll({ where: { userId: id }, order: [['timestamp', 'DESC']] }).then(function(result) {
+            let likes = []
+
+            for (let like of result) {
+                likes.push(like.postId)
             }
 
             return posts

@@ -19,13 +19,13 @@ block content
       button.btn.btn-success#profile-follow-button(type='button', data-action='follow') Follow
 
     #profile-sidebar
-      .p #{userData.bio}
+      p #{userData.bio}
 
 
       //- The user will be able to make posts from their own profile page
       if isMyUser
-        .h4.float-left.mt-3 New Post
-        form(action=`/user/${myUsername}/post`, method='post', id='post-form')
+        .h4.float-left New Post
+        form(action='/post/new', method='post', id='post-form')
           .form-group
             textarea.form-control(rows='5', name='postText')
             button.btn.btn-primary.mr-1.mt-1(type='button') Image
@@ -39,9 +39,9 @@ block content
           li.nav-item
             a.nav-link(href='#') 0  Likes
           li.nav-item
-            a.nav-link(href='#') 0 Followers
+            a.nav-link(href='#') #{user.followerCount} Followers
           li.nav-item
-            a.nav-link(href='#') #{user.followingCount}  Following
+            a.nav-link(href='#') #{user.followingCount} Following
 
       .card-body
         each post in user.posts
@@ -50,11 +50,11 @@ block content
               img(src=`/images/avatar/${avatar}.webp`)
             .h6 @#{userData.username}
             p #{post.text}
-            .btn-toolbar(role='toolbar')
-              .btn-group.mr-2(role='group')
-                button.btn.btn-outline-primary(type='button') Comment
-                button.btn.btn-outline-primary(type='button') Like
-                button.btn.btn-outline-primary(type='button') Repost
-              .btn-group(role='group')
-                button.btn.btn-outline-secondary(type='button') #{post.timestamp}
+            table.postButtons
+              tbody
+                tr
+                  td.i.far.fa-comment.comment-button
+                  td.i.far.fa-heart.like-button(data-action='like')
+                  td.i.fas.fa-retweet.repost-button
+                  td #{post.timestamp}
           hr

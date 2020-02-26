@@ -80,6 +80,7 @@ hr {
 
 .post .avatar-sm {
     float: left;
+    position: absolute;
 }
 
 .post .h6,
@@ -88,6 +89,42 @@ hr {
     margin-left: 100px;
     margin-top: 4px;
     margin-bottom: 4px;
+}
+
+.postButtons {
+    width: 100%;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    font-size: 20px;
+}
+
+.postButtons td:first-child {
+    margin-left: 100px;
+}
+
+.postButtons td {
+    vertical-align: text-bottom;
+    margin-right: 30px;
+}
+
+.postButtons td:last-child {
+    font-size: 1rem;
+    text-align: right;
+}
+
+.comment-button:hover,
+.repost-button:hover {
+    cursor: pointer;
+    color: #007bff;
+}
+
+.like-button:hover {
+    cursor: pointer;
+    color: #bd1f1f;
+}
+
+.liked {
+    color: #bd1f1f;
 }
 
 /* Mobile scaling */
@@ -100,6 +137,10 @@ hr {
     #feed {
         width: 100%;
         margin-left: 0%;
+    }
+
+    .postButtons td {
+        margin-right: 20px;
     }
 }
 

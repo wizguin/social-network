@@ -46,4 +46,33 @@ window.onload = function() {
         })
     })
 
+    $('.like-button').click(function() {
+        let action = $(this).data('action')
+
+        switch(action) {
+            case 'like':
+                $.ajax({
+                    url: '/post/like',
+                    type: 'post',
+                    data: { postId: 0 },
+                    success: () => {
+                        $(this).addClass('fas liked').removeClass('far')
+                        $(this).data('action', 'unlike')
+                    }
+                })
+                break
+
+            case 'unlike':
+                $.ajax({
+                    url: '/post/like',
+                    type: 'post',
+                    data: { postId: 0 },
+                    success: () => {
+                        $(this).addClass('far').removeClass('fas liked')
+                        $(this).data('action', 'like')
+                    }
+                })
+                break
+        }
+    })
 }
