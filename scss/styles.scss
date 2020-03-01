@@ -193,15 +193,12 @@ hr {
 
 /*========== Profile page ==========*/
 
-#cover {
+#header {
     width: 100%;
     height: 280px;
     margin-top: 57px;
-    background: #808080;
-    background-image: url('/images/cover.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    background: #4e4e4e;
+    object-fit: cover;
     filter: brightness(90%);
 }
 

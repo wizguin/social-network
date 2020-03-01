@@ -4,7 +4,11 @@ block content
 
   - var avatar = (profile.avatar) ? profile.avatar : 'default'
 
-  #cover
+  if profile.header
+    img(id='header', src=`/images/header/${profile.header}.webp`)
+  else
+    #header
+
   .container
     .avatar-lg#avatar-profile
       img(src=`/images/avatar/${avatar}.webp`)
@@ -25,7 +29,8 @@ block content
         form(action='/post/new', method='post', id='post-form')
           .form-group
             textarea.form-control(rows='5', name='postText')
-            button.btn.btn-primary.mr-1.mt-1(type='button') Image
+            button.btn.btn-primary.mr-1.mt-1(type='button')
+              i.far.fa-image
             button.btn.btn-primary.mt-1(type='submit') Post
 
     #profile-posts
