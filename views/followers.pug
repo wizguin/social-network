@@ -2,12 +2,11 @@ extends user
 
 block profileContent
 
-    .card-body
+    .card-body.border-left.border-right
       each item in profile.content
-        .post.container.mb-5
+        .post.container.border-bottom
           a(href=`/user/${item.username}`)
             .avatar-sm
               img(src=`/images/avatar/${(item.avatar) ? item.avatar : 'default'}.webp`)
           .h6
-            a(href=`/user/${item.username}`) @#{item.username}
-        hr
+            a(href=`/user/${item.username}`) #{item.username}

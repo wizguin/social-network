@@ -10,9 +10,8 @@ block content
         .avatar-md.float-left.mr-3
           img(src=`/images/avatar/${avatar}.webp`)
 
-      .h5.mt-3.mb-2 @#{user.username}
+      .h5.mt-3.mb-2 #{user.username}
       button.btn.btn-primary.mt-2(type='button') Settings
-      button.btn.btn-danger.mt-2(type='button' onclick='location.href=\'/logout\'') Logout
 
     .container.float-left
       .h4.float-left New Post

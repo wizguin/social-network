@@ -2,20 +2,19 @@ extends user
 
 block profileContent
 
-    .card-body
+    .card-body.border-left.border-right
       each item in profile.content
-        .post.container
+        .post.container.border-bottom
           a(href=`/user/${profile.username}`)
             .avatar-sm
               img(src=`/images/avatar/${avatar}.webp`)
           .h6
-            a(href=`/user/${profile.username}`) @#{profile.username}
+            a(href=`/user/${profile.username}`) #{profile.username}
           p #{item.text}
           table.postButtons
             tbody
               tr
                 td.i.far.fa-comment.comment-button
                 td.i.far.fa-heart.like-button(data-action='like')
-                td.i.fas.fa-retweet.repost-button
+                td.i.fas.fa-arrow-right.repost-button
                 td #{item.timestamp}
-        hr

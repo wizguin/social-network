@@ -34,7 +34,7 @@ async function renderProfile(req, res, contentType, template = contentType) {
     if (!isMyUser) profile.isFollowing = await database.isFollowing(req.session.userId, user.id)
 
     res.render(template, {
-        title: `@${req.params.username}`,
+        title: `${req.params.username}'s Profile`,
         myUsername: req.session.username,
         isMyUser: isMyUser,
         profile: profile

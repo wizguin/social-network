@@ -3,6 +3,7 @@ import express from 'express'
 import path from 'path'
 import session from 'express-session'
 import logger from 'morgan'
+import nodeSassMiddleware from 'node-sass-middleware'
 // Routers
 import homeRouter from './routes/home'
 import loginRouter from './routes/login'
@@ -38,6 +39,13 @@ app.use(session({
         resave: sessionSettings.resave,
         saveUninitalized: sessionSettings.saveUninitalized,
     }
+}))
+app.use(nodeSassMiddleware({
+    src: path.join(__dirname, '/scss'),
+    dest: path.join(__dirname, '/public/css'),
+    debug: true,
+    outputStyle: 'compressed',
+    prefix: '/css'
 }))
 
 function isLoggedIn(req, res, next) {
