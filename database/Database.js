@@ -80,6 +80,18 @@ export default class Database {
         })
     }
 
+    /*========== Post find queries ==========*/
+
+    getPostById(id) {
+        return this.posts.findOne({ where: { id: id } }).then(function(post) {
+            if (post) {
+                return post
+            } else {
+                return null
+            }
+        })
+    }
+
     /*========== Profile page queries ==========*/
 
     getPosts(id) {
@@ -88,6 +100,8 @@ export default class Database {
 
             for (let post of result) {
                 posts.push({
+                    username: id.profile.username,
+                    avatar: id.profile.avatar,
                     id: post.id,
                     text: post.text,
                     image: post.image,
@@ -107,17 +121,25 @@ export default class Database {
     }
 
     getLikes(id) {
-        return this.likes.findAll({ where: { userId: id.profileId }, order: [['timestamp', 'DESC']] }).then((result) => {
+        return this.likes.findAll({ where: { userId: id.profileId }, order: [['timestamp', 'DESC']] }).then(async (result) => {
             let likes = []
 
             for (let like of result) {
-                likes.push({
-                    id: like.postId,
-                    text: '',
-                    image: '',
-                    timestamp: '',
-                    isLiked: true
-                })
+                let post = await this.getPostById(like.postId)
+
+                if (post) {
+                    let user = await this.findById(post.userId)
+
+                    likes.push({
+                        username: user.username,
+                        avatar: user.avatar,
+                        id: post.id,
+                        text: post.text,
+                        image: post.image,
+                        timestamp: this.timestampToDate(post.timestamp),
+                        isLiked: true
+                    })
+                }
             }
 
             return likes
