@@ -55,7 +55,7 @@ window.onload = function() {
                 $.ajax({
                     url: '/post/like',
                     type: 'post',
-                    data: { postId: 0 },
+                    data: { postId: $(this).data('id') },
                     success: () => {
                         $(this).addClass('fas liked').removeClass('far')
                         $(this).data('action', 'unlike')
@@ -67,7 +67,7 @@ window.onload = function() {
                 $.ajax({
                     url: '/post/unlike',
                     type: 'post',
-                    data: { postId: 0 },
+                    data: { postId: $(this).data('id') },
                     success: () => {
                         $(this).addClass('far').removeClass('fas liked')
                         $(this).data('action', 'like')

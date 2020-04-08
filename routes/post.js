@@ -14,7 +14,7 @@ router.post('/new', [
     check('postText')
         .trim()
         .escape()
-        .isLength({ min: 1}).withMessage('Enter some text.')
+        .isLength({ min: 1 }).withMessage('Enter some text.')
         .isLength({ max: 300 }).withMessage('Posts cannot exceed 300 characters.')
 
 ], function(req, res) {
@@ -29,15 +29,43 @@ router.post('/new', [
     res.sendStatus(200)
 })
 
-router.post('/like', function(req, res) {
-    console.log(req.body.postId)
+router.post('/like', [
+    check('postId')
+        .trim()
+        .escape()
+        .isLength({ min: 1 })
+        .isNumeric()
+
+], function(req, res) {
+    let errors = validationResult(req)
+    if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
+
+    database.likes.create({
+        userId: req.session.userId,
+        postId: req.body.postId,
+        timestamp: database.getTimestamp()
+    })
     res.sendStatus(200)
 })
 
-router.post('/unlike', function(req, res) {
-    console.log(req.body.postId)
+router.post('/unlike', [
+    check('postId')
+        .trim()
+        .escape()
+        .isLength({ min: 1 })
+        .isNumeric()
+
+], function(req, res) {
+    let errors = validationResult(req)
+    if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
+
+    database.likes.destroy({
+        where: {
+            userId: req.session.userId,
+            postId: req.body.postId
+        }
+    })
     res.sendStatus(200)
 })
-
 
 module.exports = router
