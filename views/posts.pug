@@ -15,6 +15,9 @@ block profileContent
             tbody
               tr
                 td.i.far.fa-comment.comment-button
-                td.i.far.fa-heart.like-button(data-id=item.id data-action='like')
+                if item.isLiked
+                  td.i.fas.fa-heart.liked.like-button(data-id=item.id data-action='unlike')
+                else
+                  td.i.far.fa-heart.like-button(data-id=item.id data-action='like')
                 td.i.fas.fa-arrow-right.repost-button
                 td #{item.timestamp}

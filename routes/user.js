@@ -18,7 +18,7 @@ async function renderProfile(req, res, contentType, template = contentType) {
 
     if (!user) return res.redirect('/home')
 
-    let content = await contentTypes[contentType](user.id)
+    let content = await contentTypes[contentType]({profileId: user.id, userId: req.session.userId})
 
     let profile = {
         username: user.dataValues.username,

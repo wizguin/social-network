@@ -83,7 +83,7 @@ export default class Database {
     /*========== Profile page queries ==========*/
 
     getPosts(id) {
-        return this.posts.findAll({ where: { userId: id }, order: [['timestamp', 'DESC']] }).then((result) => {
+        return this.posts.findAll({ where: { userId: id.profileId }, order: [['timestamp', 'DESC']] }).then(async (result) => {
             let posts = []
 
             for (let post of result) {
@@ -91,7 +91,8 @@ export default class Database {
                     id: post.id,
                     text: post.text,
                     image: post.image,
-                    timestamp: this.timestampToDate(post.timestamp)
+                    timestamp: this.timestampToDate(post.timestamp),
+                    isLiked: await this.isLiked(id.userId, post.id)
                 })
             }
 
@@ -106,11 +107,17 @@ export default class Database {
     }
 
     getLikes(id) {
-        return this.likes.findAll({ where: { userId: id }, order: [['timestamp', 'DESC']] }).then(function(result) {
+        return this.likes.findAll({ where: { userId: id.profileId }, order: [['timestamp', 'DESC']] }).then((result) => {
             let likes = []
 
             for (let like of result) {
-                likes.push(like.postId)
+                likes.push({
+                    id: like.postId,
+                    text: '',
+                    image: '',
+                    timestamp: '',
+                    isLiked: true
+                })
             }
 
             return likes
@@ -124,7 +131,7 @@ export default class Database {
     }
 
     getFollowers(id) {
-        return this.followings.findAll({ where: { followingId: id } }).then(async (result) => {
+        return this.followings.findAll({ where: { followingId: id.profileId } }).then(async (result) => {
             let followers = []
 
             for (let follower of result) {
@@ -147,7 +154,7 @@ export default class Database {
     }
 
     getFollowings(id) {
-        return this.followings.findAll({ where: { userId: id } }).then(async (result) => {
+        return this.followings.findAll({ where: { userId: id.profileId } }).then(async (result) => {
             let followings = []
 
             for (let following of result) {
@@ -182,6 +189,12 @@ export default class Database {
     isFollowing(id, followingId) {
         return this.followings.findOne({ where: { userId: id, followingId: followingId } }).then(function(result) {
             return (result) ? true : false
+        })
+    }
+
+    isLiked(id, postId) {
+        return this.likes.findOne({ where: { userId: id, postId: postId } }).then(function(result) {
+            return (result) ? true: false
         })
     }
 
