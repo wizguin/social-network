@@ -88,6 +88,7 @@ export default class Database {
 
             for (let post of result) {
                 posts.push({
+                    id: post.id,
                     text: post.text,
                     image: post.image,
                     timestamp: this.timestampToDate(post.timestamp)

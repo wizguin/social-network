@@ -11,10 +11,10 @@ block profileContent
           .h6
             a(href=`/user/${profile.username}`) #{profile.username}
           p #{item.text}
-          table.postButtons
+          table.post-buttons
             tbody
               tr
                 td.i.far.fa-comment.comment-button
-                td.i.far.fa-heart.like-button(data-action='like')
+                td.i.far.fa-heart.like-button(data-id=item.id data-action='like')
                 td.i.fas.fa-arrow-right.repost-button
                 td #{item.timestamp}

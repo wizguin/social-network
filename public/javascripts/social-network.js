@@ -65,7 +65,7 @@ window.onload = function() {
 
             case 'unlike':
                 $.ajax({
-                    url: '/post/like',
+                    url: '/post/unlike',
                     type: 'post',
                     data: { postId: 0 },
                     success: () => {

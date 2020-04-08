@@ -34,4 +34,10 @@ router.post('/like', function(req, res) {
     res.sendStatus(200)
 })
 
+router.post('/unlike', function(req, res) {
+    console.log(req.body.postId)
+    res.sendStatus(200)
+})
+
+
 module.exports = router
