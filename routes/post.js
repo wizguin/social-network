@@ -68,4 +68,23 @@ router.post('/unlike', [
     res.sendStatus(200)
 })
 
+router.post('/repost', [
+    check('postId')
+        .trim()
+        .escape()
+        .isLength({ min: 1 })
+        .isNumeric()
+
+], function(req, res) {
+    let errors = validationResult(req)
+    if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
+
+    database.reposts.create({
+        userId: req.session.userId,
+        postId: req.body.postId,
+        timestamp: database.getTimestamp()
+    })
+    res.sendStatus(200)
+})
+
 module.exports = router

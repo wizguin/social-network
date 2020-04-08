@@ -3,6 +3,7 @@ import Sequelize from 'sequelize'
 import Users from './tables/Users'
 import Followings from './tables/Followings'
 import Posts from './tables/Posts'
+import Reposts from './tables/Reposts'
 import Likes from './tables/Likes'
 
 
@@ -22,6 +23,7 @@ export default class Database {
         this.users = Users.init(this.sequelize, Sequelize)
         this.followings = Followings.init(this.sequelize, Sequelize)
         this.posts = Posts.init(this.sequelize, Sequelize)
+        this.reposts = Reposts.init(this.sequelize, Sequelize)
         this.likes = Likes.init(this.sequelize, Sequelize)
 
         // Associations

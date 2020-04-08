@@ -34,6 +34,8 @@ window.onload = function() {
         }
     })
 
+    /*========== Post handlers ==========*/
+
     $('#post-form').submit(function(event) {
         event.preventDefault()
 
@@ -49,13 +51,14 @@ window.onload = function() {
 
     $('.like-button').click(function() {
         let action = $(this).data('action')
+        let postId = $(this).data('id')
 
         switch(action) {
             case 'like':
                 $.ajax({
                     url: '/post/like',
                     type: 'post',
-                    data: { postId: $(this).data('id') },
+                    data: { postId: postId },
                     success: () => {
                         $(this).addClass('fas liked').removeClass('far')
                         $(this).data('action', 'unlike')
@@ -75,5 +78,18 @@ window.onload = function() {
                 })
                 break
         }
+    })
+
+    $('.repost-button').click(function() {
+        let postId = $(this).data('id')
+
+        $.ajax({
+            url: '/post/repost',
+            type: 'post',
+            data: { postId: postId },
+            success: (response) => {
+                console.log(response)
+            }
+        })
     })
 }
