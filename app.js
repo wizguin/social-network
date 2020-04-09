@@ -9,6 +9,7 @@ import homeRouter from './routes/home'
 import loginRouter from './routes/login'
 import registerRouter from './routes/register'
 import userRouter from './routes/user'
+import settingsRouter from './routes/settings'
 import logutRouter from './routes/logout'
 import postRouter from './routes/post'
 
@@ -73,6 +74,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.all('/', isLoggedIn, function(req, res) { res.redirect('home') })
 app.use('/home', isLoggedIn, homeRouter)
 app.use('/user', isLoggedIn, userRouter)
+app.use('/settings', isLoggedIn, settingsRouter)
 app.use('/login', isLoggedOut, loginRouter)
 app.use('/logout', isLoggedIn, logutRouter)
 app.use('/register', isLoggedOut, registerRouter)

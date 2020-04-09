@@ -11,7 +11,8 @@ block content
           img(src=`/images/avatar/${avatar}.webp`)
 
       .h5.mt-3.mb-2 #{user.username}
-      button.btn.btn-primary.mt-2(type='button') Settings
+      a(href='/settings')
+        button.btn.btn-primary.mt-2(type='button') Settings
 
     .container.float-left
       .h4.float-left New Post

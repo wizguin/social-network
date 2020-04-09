@@ -15,7 +15,8 @@ block content
     .h2#profile-name #{profile.username}
     //- Determine button type for user profile, settings/unfollow/follow
     if isMyUser
-      button.btn.btn-primary#profile-settings-button(type='button') Settings
+      a(href='/settings')
+        button.btn.btn-primary#profile-settings-button(type='button') Settings
     else if profile.isFollowing
       button.btn.btn-danger#profile-follow-button(type='button', data-action='unfollow') Unfollow
     else
