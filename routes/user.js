@@ -6,7 +6,7 @@ const router = express.Router()
 const database = new Database()
 
 const contentTypes = {
-    'posts': database.getPosts.bind(database),
+    'posts': database.getAllPosts.bind(database),
     'likes': database.getLikes.bind(database),
     'followers': database.getFollowers.bind(database),
     'following': database.getFollowings.bind(database)

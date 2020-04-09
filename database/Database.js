@@ -96,6 +96,13 @@ export default class Database {
 
     /*========== Profile page queries ==========*/
 
+    async getAllPosts(id) {
+        let posts = await this.getPosts(id)
+        let reposts = await this.getReposts(id)
+
+        return posts.concat(reposts)
+    }
+
     getPosts(id) {
         return this.posts.findAll({ where: { userId: id.profileId }, order: [['timestamp', 'DESC']] }).then(async (result) => {
             let posts = []
@@ -113,6 +120,31 @@ export default class Database {
             }
 
             return posts
+        })
+    }
+
+    getReposts(id) {
+        return this.reposts.findAll({ where: { userId: id.profileId }, order: [['timestamp', 'DESC']] }).then(async (result) => {
+            let reposts = []
+
+            for (let repost of result) {
+                let post = await this.getPostById(repost.postId)
+                let originalPoster = await this.findById(post.userId)
+
+                reposts.push({
+                    reposter: id.profile.username,
+                    username: originalPoster.username,
+                    avatar: originalPoster.avatar,
+                    id: post.id,
+                    text: post.text,
+                    image: post.image,
+                    timestamp: this.timestampToDate(repost.timestamp),
+                    originalTimestamp: this.timestampToDate(post.timestamp),
+                    isLiked: await this.isLiked(id.userId, post.id)
+                })
+            }
+
+            return reposts
         })
     }
 
