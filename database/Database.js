@@ -139,7 +139,7 @@ export default class Database {
                         text: post.text,
                         image: post.image,
                         timestamp: this.timestampToDate(post.timestamp),
-                        isLiked: true
+                        isLiked: await this.isLiked(id.userId, post.id)
                     })
                 }
             }
