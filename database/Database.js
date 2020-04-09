@@ -100,7 +100,12 @@ export default class Database {
         let posts = await this.getPosts(id)
         let reposts = await this.getReposts(id)
 
-        return posts.concat(reposts)
+        let allPosts = posts.concat(reposts)
+        return allPosts.sort(function(a, b) {
+            if (a.timestamp > b.timestamp) return -1
+            if (a.timestamp < b.timestamp) return 1
+            return 0
+        })
     }
 
     getPosts(id) {
