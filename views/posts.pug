@@ -31,4 +31,7 @@ block profileContent
               else
                 td.i.far.fa-heart.like-button(data-id=item.id data-action='like')
               td.i.fas.fa-arrow-right.repost-button(data-id=item.id)
-              td #{item.timestamp}
+              if isRepost
+                td #{item.originalTimestamp}
+              else
+                td #{item.timestamp}

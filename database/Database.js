@@ -97,6 +97,7 @@ export default class Database {
     /*========== Profile page queries ==========*/
 
     // todo: could be joined into one query,
+    // need to add confirmation of repost,
     // bug: can like a repost multiple times
     async getAllPosts(id) {
         let posts = await this.getPosts(id)
