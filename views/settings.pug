@@ -1,3 +1,37 @@
 extends layout
 
 block content
+
+  .settings-container
+    h1 Settings
+
+    form.mt-4(action='/settings/update-password', method='post')
+      h5 Change Password
+      .form-group
+        input.form-control(type='password', placeholder='New Password', name='username')
+      .form-group
+        input.form-control(type='password', placeholder='Repeat New Password', name='passwordRepeat')
+      button.btn.btn-primary.btn-lg(type='submit') Update Password
+
+    form.mt-4(action='/settings/update-email', method='post')
+      h5 Change Email Address
+      .form-group
+        input.form-control(type='email', aria-describedby='emailHelp', placeholder='New Email Address', name='email')
+      button.btn.btn-primary.btn-lg(type='submit') Update Email Address
+
+    form.mt-4(action='/settings/update-profile', method='post')
+      h5 Profile Settings
+      .form-group
+        label(for='profileAvatar') Profile Avatar
+        input#profileAvatar.form-control-file(type='file')
+
+        label(for='profileHeader').mt-3 Profile Header
+        input#profileHeader.form-control-file(type='file')
+
+        label(for='profileBio').mt-3 Profile Bio
+        textarea#profileBio.form-control(rows='3')
+
+        button.btn.btn-primary.btn-lg(type='submit').mt-3 Update Profile
+
+
+
