@@ -6,8 +6,15 @@ block profileContent
     each item in profile.content
 
       - var postAvatar = (item.avatar) ? item.avatar : 'default'
+      - var isRepost = (item.reposter) ? true : false
 
       .post.container.border-bottom
+        if isRepost
+          p.repost-text
+            i.fas.fa-arrow-right
+            |
+            | #{item.reposter} Reposted
+
         a(href=`/user/${item.username}`)
           .avatar-sm
             img(src=`/images/avatar/${postAvatar}.webp`)

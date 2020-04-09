@@ -96,15 +96,17 @@ export default class Database {
 
     /*========== Profile page queries ==========*/
 
+    // todo: could be joined into one query,
+    // bug: can like a repost multiple times
     async getAllPosts(id) {
         let posts = await this.getPosts(id)
         let reposts = await this.getReposts(id)
 
         let allPosts = posts.concat(reposts)
         return allPosts.sort(function(a, b) {
-            if (a.timestamp > b.timestamp) return -1
-            if (a.timestamp < b.timestamp) return 1
-            return 0
+            if (a.timestamp > b.timestamp) return -1 // a takes precedence
+            if (a.timestamp < b.timestamp) return 1 // b takes precedence
+            return 0 // a and b are equal
         })
     }
 
