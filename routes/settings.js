@@ -12,4 +12,21 @@ router.get('/', function(req, res) {
     })
 })
 
+router.post('/update-bio', [
+    check('bio', 'Enter a bio (1-200 characters).')
+        .trim()
+        .escape()
+        .isLength({ min: 1, max: 200 })
+
+], async function(req, res) {
+    let errors = validationResult(req)
+    if (!errors.isEmpty()) return res.render('settings')
+
+    database.users.update(
+        { bio: req.body.bio },
+        { where: { id: req.session.userId }
+    })
+    res.redirect('/settings')
+})
+
 module.exports = router
