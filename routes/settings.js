@@ -39,6 +39,7 @@ function uploadImage(req, res, type) {
 router.get('/', function(req, res) {
     res.render('settings', {
         title: 'Settings',
+        myUsername: req.session.username
     })
 })
 
@@ -92,7 +93,7 @@ router.post('/update-email', [
 
 ], function(req, res) {
     let errors = validationResult(req)
-    if (!errors.isEmpty()) return res.render('settings')
+    if (!errors.isEmpty()) return res.redirect('/settings')
 
     database.users.update(
         { email: req.body.email },
@@ -109,7 +110,7 @@ router.post('/update-bio', [
 
 ], function(req, res) {
     let errors = validationResult(req)
-    if (!errors.isEmpty()) return res.render('settings')
+    if (!errors.isEmpty()) return res.redirect('/settings')
 
     database.users.update(
         { bio: req.body.bio },
