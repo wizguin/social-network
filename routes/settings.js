@@ -14,6 +14,26 @@ const mimeTypes = {
     'image/gif': '.gif'
 }
 
+function uploadImage(req, res, type) {
+    let image = req.files[type]
+
+    if (!req.files ||
+        Object.keys(req.files).length === 0 ||
+        !(image.mimetype in mimeTypes)) {
+            return res.redirect('/settings')
+    }
+
+    //let id = uuidv4()
+    //let type = mimeTypes[image.mimetype]
+    let path = `public/images/${type}/${req.session.userId}.webp`
+
+    image.mv(path, function(err) {
+        if (err) return console.log(err)
+    })
+
+    res.redirect('/settings')
+}
+
 /*========== Get routes ==========*/
 
 router.get('/', function(req, res) {
@@ -23,6 +43,14 @@ router.get('/', function(req, res) {
 })
 
 /*========== Post routes ==========*/
+
+router.post('/update-avatar', function(req, res) {
+    uploadImage(req, res, 'avatar')
+})
+
+router.post('/update-header', function(req, res) {
+    uploadImage(req, res, 'header')
+})
 
 router.post('/update-password', [
     check('password', 'Enter a password (6-20 characters).')
@@ -70,46 +98,6 @@ router.post('/update-email', [
         { email: req.body.email },
         { where: { id: req.session.userId }
     })
-    res.redirect('/settings')
-})
-
-router.post('/update-avatar', function(req, res) {
-    let avatar = req.files.avatar
-
-    if (!req.files ||
-        Object.keys(req.files).length === 0 ||
-        !(avatar.mimetype in mimeTypes)) {
-            return res.redirect('/settings')
-    }
-
-    //let id = uuidv4()
-    let type = mimeTypes[avatar.mimetype]
-    let path = `public/images/avatar/${req.session.userId}.webp`
-
-    avatar.mv(path, function(err) {
-        if (err) return console.log(err)
-    })
-
-    res.redirect('/settings')
-})
-
-router.post('/update-header', function(req, res) {
-    let header = req.files.header
-
-    if (!req.files ||
-        Object.keys(req.files).length === 0 ||
-        !(header.mimetype in mimeTypes)) {
-            return res.redirect('/settings')
-    }
-
-    //let id = uuidv4()
-    let type = mimeTypes[header.mimetype]
-    let path = `public/images/header/${req.session.userId}.webp`
-
-    header.mv(path, function(err) {
-        if (err) return console.log(err)
-    })
-
     res.redirect('/settings')
 })
 
