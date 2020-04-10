@@ -10,6 +10,8 @@ router.get('/', function(req, res) {
     res.redirect('/home')
 })
 
+/*========== Post routes ==========*/
+
 router.post('/new', [
     check('postText')
         .trim()

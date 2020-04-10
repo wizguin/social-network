@@ -19,16 +19,16 @@ block content
         input.form-control(type='email', aria-describedby='emailHelp', placeholder='New Email Address', name='email')
       button.btn.btn-primary.btn-lg(type='submit') Update Email Address
 
-    form.mt-4(action='/settings/update-avatar', method='post')
+    form.mt-4(action='/settings/update-avatar', method='post', enctype='multipart/form-data')
       h5 Change Avatar
       .form-group
-        input#profileAvatar.form-control-file(type='file')
+        input#profileAvatar.form-control-file(type='file', accept='image/x-png,image/gif,image/jpeg', name='avatar')
       button.btn.btn-primary.btn-lg(type='submit') Update Avatar
 
-    form.mt-4(action='/settings/update-header', method='post')
+    form.mt-4(action='/settings/update-header', method='post', enctype='multipart/form-data')
       h5 Change Header
       .form-group
-        input#profileHeader.form-control-file(type='file')
+        input#profileHeader.form-control-file(type='file', accept='image/x-png,image/gif,image/jpeg', name='header')
       button.btn.btn-primary.btn-lg(type='submit') Update Header
 
     form.mt-4(action='/settings/update-bio', method='post')

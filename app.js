@@ -4,6 +4,7 @@ import path from 'path'
 import session from 'express-session'
 import logger from 'morgan'
 import nodeSassMiddleware from 'node-sass-middleware'
+import fileUpload from 'express-fileupload'
 // Routers
 import homeRouter from './routes/home'
 import loginRouter from './routes/login'
@@ -48,6 +49,7 @@ app.use(nodeSassMiddleware({
     outputStyle: 'compressed',
     prefix: '/css'
 }))
+app.use(fileUpload())
 
 function isLoggedIn(req, res, next) {
     if (req.session.userId) {
