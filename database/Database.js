@@ -118,7 +118,7 @@ export default class Database {
             for (let post of result) {
                 posts.push({
                     username: id.profile.username,
-                    avatar: id.profile.avatar,
+                    avatar: post.userId,
                     id: post.id,
                     text: post.text,
                     image: post.image,
@@ -142,7 +142,7 @@ export default class Database {
                 reposts.push({
                     reposter: id.profile.username,
                     username: originalPoster.username,
-                    avatar: originalPoster.avatar,
+                    avatar: post.userId,
                     id: post.id,
                     text: post.text,
                     image: post.image,
@@ -174,7 +174,7 @@ export default class Database {
 
                     likes.push({
                         username: user.username,
-                        avatar: user.avatar,
+                        avatar: post.userId,
                         id: post.id,
                         text: post.text,
                         image: post.image,
@@ -203,7 +203,7 @@ export default class Database {
 
                 followers.push({
                     username: user.username,
-                    avatar: user.avatar
+                    avatar: follower.userId
                 })
             }
 
@@ -226,7 +226,7 @@ export default class Database {
 
                 followings.push({
                     username: user.username,
-                    avatar: user.avatar
+                    avatar: following.followingId
                 })
             }
 

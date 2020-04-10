@@ -11,7 +11,8 @@ router.get('/', function(req, res) {
         res.render('home', {
             title: 'Home',
             myUsername: req.session.username,
-            user: user.dataValues
+            user: user.dataValues,
+            avatar: user.id
         })
     })
 })

@@ -2,16 +2,11 @@ extends layout
 
 block content
 
-  - var avatar = (profile.avatar) ? profile.avatar : 'default'
-
-  if profile.header
-    img(id='header', src=`/images/header/${profile.header}.webp`)
-  else
-    #header
+  img(id='header' src=`/images/header/${profile.id}.webp` alt='')
 
   .container
     .avatar-lg#avatar-profile
-      img(src=`/images/avatar/${avatar}.webp`)
+      img(src=`/images/avatar/${profile.id}.webp`, onerror='this.src="/images/avatar/default.webp"')
     .h2#profile-name #{profile.username}
     //- Determine button type for user profile, settings/unfollow/follow
     if isMyUser

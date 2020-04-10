@@ -37,16 +37,6 @@ export default class Users extends Sequelize.Model {
                     type: DataTypes.TEXT,
                     allowNull: true,
                     field: 'bio'
-                },
-                avatar: {
-                    type: DataTypes.TEXT,
-                    allowNull: true,
-                    field: 'avatar'
-                },
-                header: {
-                    type: DataTypes.TEXT,
-                    allowNull: true,
-                    field: 'header'
                 }
             },
             { sequelize, timestamps: false }

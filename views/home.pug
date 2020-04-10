@@ -2,13 +2,11 @@ extends layout
 
 block content
 
-  - var avatar = (user.avatar) ? user.avatar : 'default'
-
   #sidebar.border-right
     .container.float-left.mb-3
       a(href=`/user/${myUsername}`)
         .avatar-md.float-left.mr-3
-          img(src=`/images/avatar/${avatar}.webp`)
+          img(src=`/images/avatar/${avatar}.webp`, onerror='this.src="/images/avatar/default.webp"')
 
       .h5.mt-3.mb-2 #{user.username}
       a(href='/settings')

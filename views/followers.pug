@@ -7,6 +7,6 @@ block profileContent
         .post.container.border-bottom
           a(href=`/user/${item.username}`)
             .avatar-sm
-              img(src=`/images/avatar/${(item.avatar) ? item.avatar : 'default'}.webp`)
+              img(src=`/images/avatar/${item.avatar}.webp`, onerror='this.src="/images/avatar/default.webp"')
           .h6
             a(href=`/user/${item.username}`) #{item.username}

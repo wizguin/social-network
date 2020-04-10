@@ -5,7 +5,6 @@ block profileContent
   .card-body.border-left.border-right
     each item in profile.content
 
-      - var postAvatar = (item.avatar) ? item.avatar : 'default'
       - var isRepost = (item.reposter) ? true : false
 
       .post.container.border-bottom
@@ -17,7 +16,7 @@ block profileContent
 
         a(href=`/user/${item.username}`)
           .avatar-sm
-            img(src=`/images/avatar/${postAvatar}.webp`)
+            img(src=`/images/avatar/${item.avatar}.webp`, onerror='this.src="/images/avatar/default.webp"')
         .h6
           a(href=`/user/${item.username}`) #{item.username}
         p #{item.text}

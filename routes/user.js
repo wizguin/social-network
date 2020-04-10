@@ -25,9 +25,8 @@ async function renderProfile(req, res, contentType, template = contentType) {
     })
 
     let profile = {
+        id: user.id,
         username: user.dataValues.username,
-        avatar: user.dataValues.avatar,
-        header: user.dataValues.header,
         bio: user.dataValues.bio,
         contentType: contentType,
         content: content,
