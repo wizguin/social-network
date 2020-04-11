@@ -118,15 +118,25 @@ export default class Database {
             let posts = []
 
             for (let post of result) {
-                posts.push({
+                let isReply = await this.isReply(post.id)
+
+                let p = {
                     username: id.profile.username,
                     avatar: post.userId,
                     id: post.id,
                     text: post.text,
                     image: post.image,
                     timestamp: this.timestampToDate(post.timestamp),
-                    isLiked: await this.isLiked(id.userId, post.id)
-                })
+                    isLiked: await this.isLiked(id.userId, post.id),
+                }
+
+                if (isReply) {
+                    let originalPost = await this.getPostById(isReply.postId)
+                    let originalPoster = await this.findById(originalPost.userId)
+                    p.originalPoster = originalPoster.username
+                }
+
+                posts.push(p)
             }
 
             return posts
@@ -260,7 +270,13 @@ export default class Database {
 
     isLiked(id, postId) {
         return this.likes.findOne({ where: { userId: id, postId: postId } }).then(function(result) {
-            return (result) ? true: false
+            return (result) ? true : false
+        })
+    }
+
+    isReply(id) {
+        return this.replies.findOne({ where: { replyId: id } }).then(function(result) {
+            return (result) ? result : false
         })
     }
 

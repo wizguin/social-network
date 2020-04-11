@@ -6,6 +6,7 @@ block profileContent
     each item in profile.content
 
       - var isRepost = (item.reposter) ? true : false
+      - var isReply = (item.originalPoster) ? true : false
 
       .post.container.border-bottom
         if isRepost
@@ -13,6 +14,12 @@ block profileContent
             i.fas.fa-arrow-right
             |
             | #{item.reposter} Reposted
+
+        else if isReply
+          p.repost-text
+            i.far.fa-comment
+            |
+            | #{item.username} Replied to #{item.originalPoster}
 
         a(href=`/user/${item.username}`)
           .avatar-sm
