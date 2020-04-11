@@ -1,6 +1,6 @@
 window.onload = function() {
 
-    let postToComment = null
+    let originalPost = null
 
     /*========== Profile page handlers ==========*/
 
@@ -53,19 +53,19 @@ window.onload = function() {
     })
 
     $('.comment-button').click(function() {
-        postToComment = $(this).data('id')
+        originalPost = $(this).data('id')
         $('#commentModal').modal('show')
     })
 
     $('#comment-form').submit(function(event) {
         event.preventDefault()
         $('#commentModal').modal('hide')
+        console.log(originalPost)
 
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
-            originalPost: postToComment,
-            data: $(this).serialize(),
+            data: $(this).serialize() + `&originalPost=${originalPost}`,
             success: (response) => {
                 $(this)[0].reset()
                 console.log(response)

@@ -36,13 +36,28 @@ router.post('/comment', [
         .trim()
         .escape()
         .isLength({ min: 1 }).withMessage('Enter some text.')
-        .isLength({ max: 300 }).withMessage('Posts cannot exceed 300 characters.')
+        .isLength({ max: 300 }).withMessage('Posts cannot exceed 300 characters.'),
 
-], function(req, res) {
+    check('originalPost')
+        .trim()
+        .escape()
+        .isLength({ min: 1 })
+        .isNumeric()
+
+], async function(req, res) {
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
-    console.log(req.body.postText)
+    let post = await database.posts.create({
+        userId: req.session.userId,
+        text: req.body.postText,
+        timestamp: database.getTimestamp()
+    })
+
+    database.replies.create({
+        postId: req.body.originalPost,
+        replyId: post.id
+    })
     res.sendStatus(200)
 })
 
