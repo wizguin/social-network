@@ -8,7 +8,7 @@ block profileContent
       - var isRepost = (item.reposter) ? true : false
       - var isReply = (item.originalPoster) ? true : false
 
-      .post.container.border-bottom
+      .post.container.border-bottom(data-id=item.id)
         if isRepost
           p.repost-text
             i.fas.fa-arrow-right

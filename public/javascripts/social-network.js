@@ -38,6 +38,15 @@ window.onload = function() {
 
     /*========== Post handlers ==========*/
 
+    $('.post').click(function() {
+        window.location.href = `/thread/${$(this).data('id')}`
+    })
+
+    // Stops post buttons directing to thread
+    $('.post .post-buttons').click(function(event) {
+        event.stopPropagation()
+    })
+
     $('#post-form').submit(function(event) {
         event.preventDefault()
 
