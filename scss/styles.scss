@@ -141,6 +141,12 @@ hr {
     margin-right: 30px;
 }
 
+.post-buttons td:after {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    font-size: 1rem;
+    font-weight: normal;
+}
+
 .post-buttons td:last-child {
     font-size: 1rem;
     text-align: right;
@@ -280,4 +286,18 @@ hr {
 .settings-container button {
     width: 100%;
     margin-bottom: 1rem;
+}
+
+/*========== Threads ==========*/
+
+.thread {
+    margin-top: 57px;
+}
+
+.thread-focus {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    min-height: 175px;
+    display: flex;
+    align-items: center;
 }
