@@ -1,17 +1,17 @@
 extends layout
 
-mixin post(focus=false)
+mixin post(post, focus=false)
 
   if focus
     .thread-focus.container
       .post.container
-        +postBody
+        +postBody(post)
     .border-top.container
   else
     .post.container.border-bottom.border-left.border-right
-      +postBody
+      +postBody(post)
 
-mixin postBody
+mixin postBody(post)
 
   a(href=`/user/${post.username}`)
     .avatar-sm
@@ -34,7 +34,8 @@ mixin postBody
 block content
 
   .thread
-    +post(false)
-    +post(true)
-    +post(false)
-    +post(false)
+
+    +post(focus, true)
+
+    each item in thread
+      +post(item)

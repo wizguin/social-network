@@ -6,26 +6,22 @@ import Database from '../database/Database'
 const router = express.Router()
 const database = new Database()
 
-
-async function renderThread(req, res) {
-    let threadId = req.params.thread
-    let post = await database.getPostById(threadId)
-
-    res.render('thread', {
-        title: `${post.text}`,
-        myUsername: req.session.username,
-        post: post
-    })
-}
-
 /*========== Get routes ==========*/
 
 router.get('/', function(req, res) {
     res.redirect('/home')
 })
 
-router.get('/:thread', function(req, res) {
-    renderThread(req, res)
+router.get('/:thread', async function(req, res) {
+    let thread = await database.getThread(req.session.userId, req.params.thread)
+
+    res.render('thread', {
+        title: `${thread.focus.text}`,
+        myUsername: req.session.username,
+        replyTo: false,
+        focus: thread.focus,
+        thread: thread.replies
+    })
 })
 
 

@@ -56,7 +56,8 @@ router.post('/comment', [
 
     database.replies.create({
         postId: req.body.originalPost,
-        replyId: post.id
+        replyId: post.id,
+        timestamp: database.getTimestamp()
     })
     res.sendStatus(200)
 })

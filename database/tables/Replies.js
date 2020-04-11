@@ -22,6 +22,11 @@ export default class Replies extends Sequelize.Model {
                     type: DataTypes.INTEGER(11),
                     allowNull: false,
                     field: 'reply_id'
+                },
+                timestamp: {
+                    type: DataTypes.INTEGER(11),
+                    allowNull: false,
+                    field: 'timestamp'
                 }
             },
             { sequelize, timestamps: false }

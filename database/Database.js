@@ -100,6 +100,7 @@ export default class Database {
 
     // todo: could be joined into one query,
     // need to add confirmation of repost,
+    // need to clean up a lot of functions here,
     // bug: can like a repost multiple times
     async getAllPosts(id) {
         let posts = await this.getPosts(id)
@@ -165,6 +166,44 @@ export default class Database {
             }
 
             return reposts
+        })
+    }
+
+    async getThread(id, postId) {
+        let thread = {}
+        let focus = await this.getPostById(postId)
+        let focusPoster = await this.findById(focus.userId)
+
+        thread.focus = {
+            username: focusPoster.username,
+            avatar: focus.userId,
+            id: focus.id,
+            text: focus.text,
+            image: focus.image,
+            timestamp: this.timestampToDate(focus.timestamp),
+            isLiked: await this.isLiked(id, focus.id)
+        }
+
+        return this.replies.findAll({ where: { postId: postId }, order: [['timestamp', 'DESC']] }).then(async (result) => {
+            let replies = []
+
+            for (let reply of result) {
+                let post = await this.getPostById(reply.replyId)
+                let poster = await this.findById(post.userId)
+
+                replies.push({
+                    username: poster.username,
+                    avatar: post.userId,
+                    id: post.id,
+                    text: post.text,
+                    image: post.image,
+                    timestamp: this.timestampToDate(post.timestamp),
+                    isLiked: await this.isLiked(id, post.id)
+                })
+            }
+
+            thread.replies = replies
+            return thread
         })
     }
 
