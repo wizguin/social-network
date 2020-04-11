@@ -1,5 +1,7 @@
 window.onload = function() {
 
+    let postToComment = null
+
     /*========== Profile page handlers ==========*/
 
     $('#profile-follow-button').click(function() {
@@ -44,6 +46,28 @@ window.onload = function() {
             type: $(this).attr('method'),
             data: $(this).serialize(),
             success: (response) => {
+                $(this)[0].reset()
+                console.log(response)
+            }
+        })
+    })
+
+    $('.comment-button').click(function() {
+        postToComment = $(this).data('id')
+        $('#commentModal').modal('show')
+    })
+
+    $('#comment-form').submit(function(event) {
+        event.preventDefault()
+        $('#commentModal').modal('hide')
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            originalPost: postToComment,
+            data: $(this).serialize(),
+            success: (response) => {
+                $(this)[0].reset()
                 console.log(response)
             }
         })

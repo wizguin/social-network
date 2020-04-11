@@ -31,6 +31,21 @@ router.post('/new', [
     res.sendStatus(200)
 })
 
+router.post('/comment', [
+    check('postText')
+        .trim()
+        .escape()
+        .isLength({ min: 1 }).withMessage('Enter some text.')
+        .isLength({ max: 300 }).withMessage('Posts cannot exceed 300 characters.')
+
+], function(req, res) {
+    let errors = validationResult(req)
+    if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
+
+    console.log(req.body.postText)
+    res.sendStatus(200)
+})
+
 router.post('/like', [
     check('postId')
         .trim()
