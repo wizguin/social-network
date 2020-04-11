@@ -5,6 +5,7 @@ import Followings from './tables/Followings'
 import Posts from './tables/Posts'
 import Reposts from './tables/Reposts'
 import Likes from './tables/Likes'
+import Replies from './tables/Replies'
 
 
 export default class Database {
@@ -25,6 +26,7 @@ export default class Database {
         this.posts = Posts.init(this.sequelize, Sequelize)
         this.reposts = Reposts.init(this.sequelize, Sequelize)
         this.likes = Likes.init(this.sequelize, Sequelize)
+        this.replies = Replies.init(this.sequelize, Sequelize)
 
         // Associations
         // this.users.hasMany(this.followings, { foreignKey: 'id' })
