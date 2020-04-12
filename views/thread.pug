@@ -3,12 +3,11 @@ extends layout
 mixin post(post, focus=false)
 
   if focus
-    .thread-focus.container
+    .post.thread-focus.container(data-id=post.id)
       .post.container
         +postBody(post)
-    .border-top.container
   else
-    .post.container.border-bottom.border-left.border-right
+    .post.container.border-bottom.border-left.border-right(data-id=post.id)
       +postBody(post)
 
 mixin postBody(post)
@@ -35,7 +34,13 @@ block content
 
   .thread
 
+    if replyTo
+      +post(replyTo)
+
     +post(focus, true)
+
+    if thread.length > 0
+      .border-top.container
 
     each item in thread
       +post(item)

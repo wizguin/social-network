@@ -18,7 +18,7 @@ router.get('/:thread', async function(req, res) {
     res.render('thread', {
         title: `${thread.focus.text}`,
         myUsername: req.session.username,
-        replyTo: false,
+        replyTo: thread.replyTo,
         focus: thread.focus,
         thread: thread.replies
     })
