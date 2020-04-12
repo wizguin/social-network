@@ -67,7 +67,10 @@ window.onload = function() {
     let originalPost = null
 
     $('.post').click(function() {
-        window.location.href = `/thread/${$(this).data('id')}`
+        // Prevents thread focus from being clickable
+        if (!($(this).parents('.thread-focus').length)) {
+            window.location.href = `/thread/${$(this).data('id')}`
+        }
     })
 
     // Stops post buttons directing to thread

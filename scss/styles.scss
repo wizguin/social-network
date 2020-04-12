@@ -101,21 +101,26 @@ hr {
     margin-top: 57px;
 }
 
-.post {
+.post:not(.focus) {
     padding: 15px;
     margin-top: 0px;
     min-height: 110px;
     cursor: pointer;
-    transition: background-color 0.15s;
+    transition: background-color 0.25s;
 }
 
-.post:hover {
+.post:hover:not(.focus) {
     background-color: $hover;
 }
 
 .post .avatar-sm {
     float: left;
     position: absolute;
+}
+
+.post img {
+    cursor: pointer;
+    transition: filter 0.25s;
 }
 
 .post img:hover {
@@ -318,8 +323,8 @@ hr {
 }
 
 .thread-focus {
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 30px;
+    margin-bottom: 30px;
     min-height: 175px;
     display: flex;
     align-items: center;

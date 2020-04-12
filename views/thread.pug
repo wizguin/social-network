@@ -3,8 +3,8 @@ extends layout
 mixin post(post, focus=false)
 
   if focus
-    .post.thread-focus.container(data-id=post.id)
-      .post.container
+    .thread-focus(data-id=post.id)
+      .post.focus.container
         +postBody(post)
   else
     .post.container.border-bottom.border-left.border-right(data-id=post.id)
