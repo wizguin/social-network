@@ -121,15 +121,7 @@ export default class Database {
             for (let post of result) {
                 let isReply = await this.isReply(post.id)
 
-                let p = {
-                    username: id.profile.username,
-                    avatar: post.userId,
-                    id: post.id,
-                    text: post.text,
-                    image: post.image,
-                    timestamp: this.timestampToDate(post.timestamp),
-                    isLiked: await this.isLiked(id.userId, post.id),
-                }
+                let p = await this.createPostObj(id.profile, post, id.userId)
 
                 if (isReply) {
                     let originalPost = await this.getPostById(isReply.postId)
@@ -185,15 +177,7 @@ export default class Database {
                 if (post) {
                     let user = await this.findById(post.userId)
 
-                    likes.push({
-                        username: user.username,
-                        avatar: post.userId,
-                        id: post.id,
-                        text: post.text,
-                        image: post.image,
-                        timestamp: this.timestampToDate(post.timestamp),
-                        isLiked: await this.isLiked(id.userId, post.id)
-                    })
+                    likes.push(await this.createPostObj(user, post, id.userId))
                 }
             }
 
@@ -264,27 +248,10 @@ export default class Database {
         if (isReply) {
             let originalPost = await this.getPostById(isReply.postId)
             let originalPoster = await this.findById(originalPost.userId)
-
-            thread.replyTo = {
-                username: originalPoster.username,
-                avatar: originalPost.userId,
-                id: originalPost.id,
-                text: originalPost.text,
-                image: originalPost.image,
-                timestamp: this.timestampToDate(originalPost.timestamp),
-                isLiked: await this.isLiked(id, originalPost.id)
-            }
+            thread.replyTo = await this.createPostObj(originalPoster, originalPost, id)
         }
 
-        thread.focus = {
-            username: focusPoster.username,
-            avatar: focus.userId,
-            id: focus.id,
-            text: focus.text,
-            image: focus.image,
-            timestamp: this.timestampToDate(focus.timestamp),
-            isLiked: await this.isLiked(id, focus.id)
-        }
+        thread.focus = await this.createPostObj(focusPoster, focus, id)
 
         return this.replies.findAll({ where: { postId: postId }, order: [['timestamp', 'DESC']] }).then(async (result) => {
             let replies = []
@@ -293,15 +260,7 @@ export default class Database {
                 let post = await this.getPostById(reply.replyId)
                 let poster = await this.findById(post.userId)
 
-                replies.push({
-                    username: poster.username,
-                    avatar: post.userId,
-                    id: post.id,
-                    text: post.text,
-                    image: post.image,
-                    timestamp: this.timestampToDate(post.timestamp),
-                    isLiked: await this.isLiked(id, post.id)
-                })
+                replies.push(await this.createPostObj(poster, post, id))
             }
 
             thread.replies = replies
@@ -335,6 +294,18 @@ export default class Database {
         return this.replies.findOne({ where: { replyId: id } }).then(function(result) {
             return (result) ? result : false
         })
+    }
+
+    async createPostObj(poster, post, userId) {
+        return {
+            username: poster.username,
+            avatar: post.userId,
+            id: post.id,
+            text: post.text,
+            image: post.image,
+            timestamp: this.timestampToDate(post.timestamp),
+            isLiked: await this.isLiked(userId, post.id)
+        }
     }
 
 }
