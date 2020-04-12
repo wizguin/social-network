@@ -1,6 +1,32 @@
+/*========== Functions ==========*/
+
+function toggleImageButton() {
+    $('#image-button').toggleClass('btn-primary')
+    $('#image-button').toggleClass('btn-danger')
+    $('#image-button i').toggleClass('far fa-image')
+    $('#image-button i').toggleClass('fas fa-times')
+}
+
+/*========== On load ==========*/
+
 window.onload = function() {
 
-    let originalPost = null
+    let upload = true
+
+    $('#image-button').click(function() {
+        if (upload) {
+            upload = false
+            $('#image-form').click() // Routes click from load room button to upload input
+        } else {
+            upload = true
+            $('#image-form').val('') // Resets image input
+            toggleImageButton()
+        }
+    })
+
+    $('#image-form').change(function(event) {
+        toggleImageButton()
+    })
 
     /*========== Profile page handlers ==========*/
 
@@ -37,6 +63,8 @@ window.onload = function() {
     })
 
     /*========== Post handlers ==========*/
+
+    let originalPost = null
 
     $('.post').click(function() {
         window.location.href = `/thread/${$(this).data('id')}`

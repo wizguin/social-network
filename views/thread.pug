@@ -19,6 +19,10 @@ mixin postBody(post)
     a(href=`/user/${post.username}`) #{post.username}
   p #{post.text}
 
+  if post.image
+    .post-image
+      img(src=`/images/upload/${post.image}.webp`)
+
   table.post-buttons
     tbody
       tr
