@@ -9,6 +9,7 @@ $gray-700: #dee2e6;
 $gray-800: #e9ecef;
 $gray-900: #f8f9fa;
 $black: #ffffff;
+$hover: #141619;
 
 $link-color: $gray-600;
 $body-color: $gray-600;
@@ -101,6 +102,11 @@ hr {
     margin-top: 0px;
     min-height: 110px;
     cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.post:hover {
+    background-color: $hover;
 }
 
 .post .avatar-sm {
