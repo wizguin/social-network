@@ -28,6 +28,10 @@ block profileContent
           a(href=`/user/${item.username}`) #{item.username}
         p #{item.text}
 
+        if item.image
+          .post-image
+            img(src=`/images/upload/${item.image}.webp`)
+
         table.post-buttons
           tbody
             tr

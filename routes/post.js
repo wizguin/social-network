@@ -28,7 +28,7 @@ router.post('/new', [
         text: req.body.postText,
         timestamp: database.getTimestamp()
     })
-    res.sendStatus(200)
+    res.json({ status: 200, post: 'test' })
 })
 
 router.post('/comment', [
