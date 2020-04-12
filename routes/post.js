@@ -1,10 +1,37 @@
 import express from 'express'
 import { check, validationResult } from 'express-validator'
+import { v4 as uuidv4 } from 'uuid'
 import Database from '../database/Database'
 
 
 const router = express.Router()
 const database = new Database()
+const mimeTypes = {
+    'image/jpeg': '.jpg',
+    'image/png': '.png',
+    'image/gif': '.gif'
+}
+
+function uploadImage(req, res) {
+    let image = req.files.image
+
+    if (!req.files ||
+        Object.keys(req.files).length === 0 ||
+        !(image.mimetype in mimeTypes)) {
+            return null
+    }
+
+    let id = uuidv4()
+    let path = `public/images/upload/${id}.webp`
+
+    image.mv(path, function(err) {
+        if (err) return console.log(err)
+    })
+
+    return id
+}
+
+/*========== Get routes ==========*/
 
 router.get('/', function(req, res) {
     res.redirect('/home')
@@ -23,11 +50,15 @@ router.post('/new', [
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
-    database.posts.create({
+    let post = {
         userId: req.session.userId,
         text: req.body.postText,
         timestamp: database.getTimestamp()
-    })
+    }
+
+    if (req.files) post.image = uploadImage(req, res)
+
+    database.posts.create(post)
     res.json({ status: 200, post: 'test' })
 })
 

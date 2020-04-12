@@ -1,7 +1,6 @@
 import express from 'express'
 import { check, validationResult } from 'express-validator'
 import bcrypt from 'bcrypt'
-//import { v4 as uuidv4 } from 'uuid'
 import Database from '../database/Database'
 
 
