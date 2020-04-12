@@ -2,27 +2,40 @@ extends layout
 
 block content
 
+  //---------- Profile header ----------//
+
   img(id='header' src=`/images/header/${profile.id}.webp` alt='')
 
   .container
+
     .avatar-lg#avatar-profile
       img(src=`/images/avatar/${profile.id}.webp`, onerror='this.src="/images/avatar/default.webp"')
+
     .h2#profile-name #{profile.username}
+
     //- Determine button type for user profile, settings/unfollow/follow
     if isMyUser
       a(href='/settings')
         button.btn.btn-primary#profile-settings-button(type='button') Settings
+
     else if profile.isFollowing
       button.btn.btn-danger#profile-follow-button(type='button', data-action='unfollow') Unfollow
+
     else
       button.btn.btn-success#profile-follow-button(type='button', data-action='follow') Follow
 
+    //---------- Profile sidebar ----------//
+
     #profile-sidebar
+
       p #{profile.bio}
+
       //- The user will be able to make posts from their own profile page
       if isMyUser
         .h4.float-left New Post
-        form(action='/post/new', method='post', id='post-form')
+
+        //- Post form
+        form(action='/post/new', method='post', enctype='multipart/form-data')
           .form-group
             textarea.form-control(rows='5', name='postText')
             button#image-button.btn.btn-primary.mr-1.mt-1(type='button')
@@ -30,15 +43,23 @@ block content
             input#image-form.image-form.form-control-file(type='file', accept='image/x-png,image/gif,image/jpeg', name='header')
             button.btn.btn-primary.mt-1(type='submit') Post
 
+    //---------- Profile posts ----------//
+
     #profile-posts
+
       .card-header.mt-5
+
+        //- Tabbed layout: Posts, Likes, Followers, and Following
         mixin tab(href, count, name)
           li.nav-item
+            //- Adds active class to active tab
             a.nav-link(href=href, class=(profile.contentType == name.toLowerCase()) ? 'active' : '') #{count} #{name}
+
         ul.nav.nav-tabs.card-header-tabs
           +tab(`/user/${profile.username}`, profile.postCount, 'Posts')
           +tab(`/user/${profile.username}/likes`, profile.likeCount, 'Likes')
           +tab(`/user/${profile.username}/followers`, profile.followerCount, 'Followers')
           +tab(`/user/${profile.username}/following`, profile.followingCount, 'Following')
 
+      //- Displays posts/likes/followers/following using respective pug template
       block profileContent

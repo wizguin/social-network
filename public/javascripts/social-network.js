@@ -15,13 +15,13 @@ window.onload = function() {
 
     $('#image-button').click(function() {
         if (upload) {
-            upload = false
             $('#image-form').click() // Routes click from load room button to upload input
         } else {
-            upload = true
             $('#image-form').val('') // Resets image input
             toggleImageButton()
         }
+
+        upload = !upload
     })
 
     $('#image-form').change(function(event) {
