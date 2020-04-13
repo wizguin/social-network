@@ -48,7 +48,7 @@ export default class Database {
 
     /*========== User data find queries ==========*/
 
-    findByUsername(username) {
+    getUserByUsername(username) {
         return this.users.findOne({ where: { username: username } }).then(function(userData) {
             if (userData) {
                 return userData
@@ -58,7 +58,7 @@ export default class Database {
         })
     }
 
-    findByEmail(email) {
+    getUserByEmail(email) {
         return this.users.findOne({ where: { email: email } }).then(function(userData) {
             if (userData) {
                 return userData
@@ -68,7 +68,7 @@ export default class Database {
         })
     }
 
-    findById(id) {
+    getUserById(id) {
         return this.users.findOne({ where: { id: id } }).then(function(userData) {
             if (userData) {
                 return userData
@@ -79,13 +79,13 @@ export default class Database {
     }
 
     usernameToId(username) {
-        return this.findByUsername(username).then(function(userData) {
+        return this.getUserByUsername(username).then(function(userData) {
             return (userData.id)
         })
     }
 
     idToUsername(id) {
-        return this.findById(id).then(function(userData) {
+        return this.getUserById(id).then(function(userData) {
             return (userData.username)
         })
     }
@@ -127,6 +127,7 @@ export default class Database {
                 post.username = await this.idToUsername(post.user_id)
                 post.avatar = post.user_id
                 post.isLiked = await this.isLiked(id.userId, post.id)
+                post.timestamp = this.timestampToDate(post.timestamp)
 
                 if (post.originalTimestamp) post.reposter = id.profile.username
                 if (post.isReply) post.originalPoster = await this.getOriginalPoster(post.id)
@@ -141,7 +142,6 @@ export default class Database {
             return reply
 
         }).then(async (reply) => {
-            console.log(reply)
             let originalPost = await this.getPostById(reply.postId)
             return await this.idToUsername(originalPost.userId)
         })
@@ -161,7 +161,7 @@ export default class Database {
                 let post = await this.getPostById(like.postId)
 
                 if (post) {
-                    let user = await this.findById(post.userId)
+                    let user = await this.getUserById(post.userId)
 
                     likes.push(await this.createPostObj(user, post, id.userId))
                 }
@@ -182,10 +182,8 @@ export default class Database {
             let followers = []
 
             for (let follower of result) {
-                let user = await this.findById(follower.userId)
-
                 followers.push({
-                    username: user.username,
+                    username: await this.idToUsername(follower.userId),
                     avatar: follower.userId
                 })
             }
@@ -205,10 +203,8 @@ export default class Database {
             let followings = []
 
             for (let following of result) {
-                let user = await this.findById(following.followingId)
-
                 followings.push({
-                    username: user.username,
+                    username: await this.idToUsername(following.followingId),
                     avatar: following.followingId
                 })
             }
@@ -228,12 +224,12 @@ export default class Database {
     async getThread(id, postId) {
         let thread = { replyTo: null }
         let focus = await this.getPostById(postId)
-        let focusPoster = await this.findById(focus.userId)
+        let focusPoster = await this.getUserById(focus.userId)
         let isReply = await this.isReply(postId)
 
         if (isReply) {
             let originalPost = await this.getPostById(isReply.postId)
-            let originalPoster = await this.findById(originalPost.userId)
+            let originalPoster = await this.getUserById(originalPost.userId)
             thread.replyTo = await this.createPostObj(originalPoster, originalPost, id)
         }
 
@@ -244,7 +240,7 @@ export default class Database {
 
             for (let reply of result) {
                 let post = await this.getPostById(reply.replyId)
-                let poster = await this.findById(post.userId)
+                let poster = await this.getUserById(post.userId)
 
                 replies.push(await this.createPostObj(poster, post, id))
             }

@@ -17,7 +17,7 @@ router.post('/', [
         .isLength({ min: 1, max: 12 })
         // Checking if username already exists in the database
         .custom(function(value, {req}) {
-            return req.app.get('db').findByUsername(value).then(function(user) {
+            return req.app.get('db').getUserByUsername(value).then(function(user) {
                 if (user) return Promise.reject('That username is already in use.')
             })
         }),
@@ -30,7 +30,7 @@ router.post('/', [
         .normalizeEmail()
         // Checking if email address already exists in the database
         .custom(function(value, {req}) {
-            return req.app.get('db').findByEmail(value).then(function(user) {
+            return req.app.get('db').getUserByEmail(value).then(function(user) {
                 if (user) return Promise.reject('That email address is already in use.')
             })
         }),

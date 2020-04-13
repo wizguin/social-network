@@ -15,7 +15,7 @@ router.post('/', [
         .escape()
         .isLength({ min: 1, max: 12 })
         .custom(function(value, {req}) {
-            return req.app.get('db').findByUsername(value).then(function(user) {
+            return req.app.get('db').getUserByUsername(value).then(function(user) {
                 if (!user) return Promise.reject('That user does not exist.')
             })
         }),
@@ -29,7 +29,7 @@ router.post('/', [
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.render('login', { title: 'Login', error: errors.array()[0].msg })
 
-    let user = await req.app.get('db').findByUsername(req.body.username)
+    let user = await req.app.get('db').getUserByUsername(req.body.username)
 
     bcrypt.compare(req.body.password, user.password, function(error, result) {
         if (error || !result) return res.render('login', { title: 'Login', error: 'Incorrect password.' })

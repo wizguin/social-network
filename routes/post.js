@@ -58,7 +58,7 @@ router.post('/new', [
     if (req.files) p.image = uploadImage(req, res)
 
     let post = await db.posts.create(p)
-    let postObj = await db.createPostObj(await db.findById(req.session.userId), post, req.session.userId)
+    let postObj = await db.createPostObj(await db.getUserById(req.session.userId), post, req.session.userId)
 
     res.json({ status: 200, post: postObj })
 })

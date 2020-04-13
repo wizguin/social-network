@@ -6,7 +6,7 @@ const router = express.Router()
 async function renderProfile(req, res, contentType, template = contentType) {
     let isMyUser = (req.params.username == req.session.username) ? true : false
     let db = req.app.get('db')
-    let user = await db.findByUsername(req.params.username)
+    let user = await db.getUserByUsername(req.params.username)
 
     if (!user) return res.redirect('/home')
 
