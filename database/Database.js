@@ -110,14 +110,14 @@ export default class Database {
                 SELECT p.*,
     				NULL AS originalTimestamp,
                     CASE WHEN EXISTS (SELECT * FROM replies WHERE reply_id = p.id) THEN 1 ELSE 0 END AS isReply
-    			FROM posts AS p WHERE user_id = 25
+    			FROM posts AS p WHERE user_id = :id
 
                 UNION
 
                 SELECT p.id, p.user_id, p.text, p.image, r.timestamp, p.timestamp AS originalTimestamp, 0 as isReply FROM posts AS p
                 INNER JOIN reposts AS r
                 ON r.post_id = p.id
-                WHERE r.user_id = 25
+                WHERE r.user_id = :id
             )
             result ORDER BY timestamp DESC`,
             { replacements: { id: id.profileId }, type: this.sequelize.QueryTypes.SELECT }
