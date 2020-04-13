@@ -1,32 +1,6 @@
-/*========== Functions ==========*/
-
-function toggleImageButton() {
-    $('#image-button').toggleClass('btn-primary')
-    $('#image-button').toggleClass('btn-danger')
-    $('#image-button i').toggleClass('far fa-image')
-    $('#image-button i').toggleClass('fas fa-times')
-}
-
 /*========== On load ==========*/
 
 window.onload = function() {
-
-    let upload = true
-
-    $('#image-button').click(function() {
-        if (upload) {
-            $('#image-form').click() // Routes click from load room button to upload input
-        } else {
-            $('#image-form').val('') // Resets image input
-            toggleImageButton()
-        }
-
-        upload = !upload
-    })
-
-    $('#image-form').change(function(event) {
-        toggleImageButton()
-    })
 
     /*========== Profile page handlers ==========*/
 
@@ -62,20 +36,24 @@ window.onload = function() {
         }
     })
 
-    /*========== Post handlers ==========*/
+    /*========== Post form handlers ==========*/
 
+    let upload = true
     let originalPost = null
 
-    $('.post').click(function() {
-        // Prevents thread focus from being clickable
-        if (!($(this).parents('.thread-focus').length)) {
-            window.location.href = `/thread/${$(this).data('id')}`
+    $('#image-button').click(function() {
+        if (upload) {
+            $('#image-form').click() // Routes click from load room button to upload input
+        } else {
+            $('#image-form').val('') // Resets image input
+            toggleImageButton()
         }
+
+        upload = !upload
     })
 
-    // Stops post buttons directing to thread
-    $('.post .post-buttons').click(function(event) {
-        event.stopPropagation()
+    $('#image-form').change(function(event) {
+        toggleImageButton()
     })
 
     $('#post-form').submit(function(event) {
@@ -84,17 +62,14 @@ window.onload = function() {
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
-            data: $(this).serialize(),
+            data: new FormData(this),
+            processData: false,
+            contentType: false,
             success: (response) => {
                 $(this)[0].reset()
-                console.log(response)
+                $('#posts').prepend(createPostHtml(response.post))
             }
         })
-    })
-
-    $('.comment-button').click(function() {
-        originalPost = $(this).data('id')
-        $('#commentModal').modal('show')
     })
 
     $('#comment-form').submit(function(event) {
@@ -111,6 +86,25 @@ window.onload = function() {
                 console.log(response)
             }
         })
+    })
+
+    /*========== Post handlers ==========*/
+
+    $('.post').click(function() {
+        // Prevents thread focus from being clickable
+        if (!($(this).parents('.thread-focus').length)) {
+            window.location.href = `/thread/${$(this).data('id')}`
+        }
+    })
+
+    // Stops post buttons directing to thread
+    $('.post .post-buttons').click(function(event) {
+        event.stopPropagation()
+    })
+
+    $('.comment-button').click(function() {
+        originalPost = $(this).data('id')
+        $('#commentModal').modal('show')
     })
 
     $('.like-button').click(function() {
@@ -156,4 +150,43 @@ window.onload = function() {
             }
         })
     })
+}
+
+/*========== Functions ==========*/
+
+function toggleImageButton() {
+    $('#image-button').toggleClass('btn-primary')
+    $('#image-button').toggleClass('btn-danger')
+    $('#image-button i').toggleClass('far fa-image')
+    $('#image-button i').toggleClass('fas fa-times')
+}
+
+function createPostHtml(post) {
+    // let isRepost = (post.reposter) ? true : false
+    // let isReply = (post.originalPoster) ? true : false
+
+    let image = ''
+    if (post.image) image = `<div class='post-image'><img src='/images/upload/${post.image}.webp'></div>`
+
+    return `
+        <div class='post container border-bottom' data-id='${post.id}'>
+
+            <a href='/user/${post.username}'>
+                <div class='avatar-sm'><img src='/images/avatar/${post.avatar}.webp' onerror='this.src=&quot;/images/avatar/default.webp&quot;'></div>
+            </a>
+            <div class='h6'><a href='/user/${post.username}'>${post.username}</a></div>
+            <p>${post.text}</p>
+            ${image}
+            <table class='post-buttons'>
+                <tbody>
+                    <tr>
+                        <td class='i far fa-comment comment-button' data-id='${post.id}' data-toggle='modal' aria-hidden='true'></td>
+                        <td class='i far fa-heart like-button' data-id='${post.id}' data-action='like' aria-hidden='true'></td>
+                        <td class='i fas fa-arrow-right repost-button' data-id='${post.id}' aria-hidden='true'></td>
+                        <td>${post.timestamp}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    `
 }

@@ -46,20 +46,22 @@ router.post('/new', [
         .isLength({ min: 1 }).withMessage('Enter some text.')
         .isLength({ max: 300 }).withMessage('Posts cannot exceed 300 characters.')
 
-], function(req, res) {
+], async function(req, res) {
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
-    let post = {
+    let p = {
         userId: req.session.userId,
         text: req.body.postText,
         timestamp: database.getTimestamp()
     }
 
-    if (req.files) post.image = uploadImage(req, res)
+    if (req.files) p.image = uploadImage(req, res)
 
-    database.posts.create(post)
-    res.json({ status: 200, post: 'test' })
+    let post = await database.posts.create(p)
+    let postObj = await database.createPostObj(await database.findById(req.session.userId), post, req.session.userId)
+
+    res.json({ status: 200, post: postObj })
 })
 
 router.post('/comment', [

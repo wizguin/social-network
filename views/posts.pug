@@ -2,7 +2,7 @@ extends user
 
 block profileContent
 
-  .card-body.border-left.border-right
+  #posts.card-body.border-left.border-right
     each item in profile.content
 
       - var isRepost = (item.reposter) ? true : false
