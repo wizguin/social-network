@@ -1,85 +1,74 @@
 extends user
 
+mixin post(post)
+  - var isRepost = (post.reposter) ? true : false
+  - var isReply = (post.originalPoster) ? true : false
+
+  .post.container.border-bottom(data-id=post.id)
+
+    if isRepost
+      p.repost-text
+        i.fas.fa-arrow-right
+        |
+        | #{post.reposter} Reposted
+    else if isReply
+      p.repost-text
+        i.far.fa-comment
+        |
+        | #{post.username} Replied to #{post.originalPoster}
+
+    a(href=`/user/${post.username}`)
+      .avatar-sm
+        img(src=`/images/avatar/${post.avatar}.webp`, onerror='this.src="/images/avatar/default.webp"')
+    .h6
+      a(href=`/user/${post.username}`) #{post.username}
+
+    p #{post.text}
+    if post.image
+      .post-image
+        img(src=`/images/upload/${post.image}.webp`)
+
+    table.post-buttons
+      tbody
+        tr
+          td.i.far.fa-comment.comment-button(data-id=post.id, data-toggle='modal')
+          if post.isLiked
+            td.i.fas.fa-heart.liked.like-button(data-id=post.id, data-action='unlike')
+          else
+            td.i.far.fa-heart.like-button(data-id=post.id, data-action='like')
+          td.i.fas.fa-arrow-right.repost-button(data-id=post.id)
+          if isRepost
+            td #{post.originalTimestamp}
+          else
+            td #{post.timestamp}
+
 block profileContent
 
   //---------- Profile posts ----------//
 
   #posts.card-body.border-left.border-right
 
-    each item in profile.content
+    each post in profile.content
+      +post(post)
 
-      - var isRepost = (item.reposter) ? true : false
-      - var isReply = (item.originalPoster) ? true : false
+  //---------- Modals ----------//
 
-      .post.container.border-bottom(data-id=item.id)
+  //- Comment modal
+  #commentModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='commentModalLabel', aria-hidden='true')
 
-        //- Shows repost/reply text
-        if isRepost
-          p.repost-text
-            i.fas.fa-arrow-right
-            |
-            | #{item.reposter} Reposted
+    .modal-dialog(role='document')
 
-        else if isReply
-          p.repost-text
-            i.far.fa-comment
-            |
-            | #{item.username} Replied to #{item.originalPoster}
+      .modal-content
 
-        //- Username and avatar
-        a(href=`/user/${item.username}`)
-          .avatar-sm
-            img(src=`/images/avatar/${item.avatar}.webp`, onerror='this.src="/images/avatar/default.webp"')
-        .h6
-          a(href=`/user/${item.username}`) #{item.username}
+        .modal-header
+          h5#commentModalLabel.modal-title Comment
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') ×
 
-        //- Post text
-        p #{item.text}
-
-        //- Post image
-        if item.image
-          .post-image
-            img(src=`/images/upload/${item.image}.webp`)
-
-        //- Post buttons
-        table.post-buttons
-
-          tbody
-            tr
-              td.i.far.fa-comment.comment-button(data-id=item.id, data-toggle='modal')
-
-              //- Like button is coloured when post is liked
-              if item.isLiked
-                td.i.fas.fa-heart.liked.like-button(data-id=item.id, data-action='unlike')
-              else
-                td.i.far.fa-heart.like-button(data-id=item.id, data-action='like')
-
-              td.i.fas.fa-arrow-right.repost-button(data-id=item.id)
-
-              //- Shows original timestamp for reposts
-              if isRepost
-                td #{item.originalTimestamp}
-              else
-                td #{item.timestamp}
-
-    //---------- Modals ----------//
-
-    //- Comment modal
-    #commentModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='commentModalLabel', aria-hidden='true')
-
-      .modal-dialog(role='document')
-
-        .modal-content
-
-          .modal-header
-            h5#commentModalLabel.modal-title Comment
-            button.close(type='button', data-dismiss='modal', aria-label='Close')
-              span(aria-hidden='true') ×
-
-          .modal-body
-            form(action='/post/comment', method='post', id='comment-form')
-              .form-group
-                textarea.form-control(rows='5', name='postText')
-                button.btn.btn-primary.mr-1.mt-1(type='button')
-                  i.far.fa-image
-                button.btn.btn-primary.mt-1(type='submit') Post
+        .modal-body
+          form(action='/post/comment', method='post', id='comment-form')
+            .form-group
+              textarea.form-control(rows='5', name='postText')
+              button.btn.btn-primary.mr-1.mt-1(type='button')
+                i.far.fa-image
+              button.btn.btn-primary.mt-1(type='submit') Post

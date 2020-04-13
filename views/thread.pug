@@ -17,8 +17,8 @@ mixin postBody(post)
       img(src=`/images/avatar/${post.avatar}.webp`, onerror='this.src="/images/avatar/default.webp"')
   .h6
     a(href=`/user/${post.username}`) #{post.username}
-  p #{post.text}
 
+  p #{post.text}
   if post.image
     .post-image
       img(src=`/images/upload/${post.image}.webp`)
