@@ -1,5 +1,7 @@
 import Sequelize from 'sequelize'
-// Tables
+
+import * as queries from './queries'
+
 import Users from './tables/Users'
 import Followings from './tables/Followings'
 import Posts from './tables/Posts'
@@ -27,14 +29,6 @@ export default class Database {
         this.reposts = Reposts.init(this.sequelize, Sequelize)
         this.likes = Likes.init(this.sequelize, Sequelize)
         this.replies = Replies.init(this.sequelize, Sequelize)
-
-        // Associations
-        // this.users.hasMany(this.followings, { foreignKey: 'id' })
-        // this.followings.belongsTo(this.users, { foreignKey: 'userId' })
-        // this.followings.belongsTo(this.users, { foreignKey: 'followingId' })
-
-        // this.users.hasMany(this.posts, { foreignKey: 'id '})
-        // this.posts.belongsTo(this.users, { foreignKey: 'userId' })
 
         this.sequelize
             .authenticate()
@@ -106,30 +100,8 @@ export default class Database {
 
     getPosts(id) {
         return this.sequelize.query(
-            `SELECT * FROM (
-                SELECT p.*,
-                    NULL AS originalTimestamp,
-                    (SELECT username FROM users WHERE id = p.user_id) as username,
-                    NULL AS reposter,
-                    CASE WHEN EXISTS (SELECT * FROM replies WHERE reply_id = p.id) THEN 1 ELSE 0 END AS isReply,
-                    CASE WHEN EXISTS (SELECT * FROM likes WHERE user_id = :userId AND post_id = p.id) THEN 1 ELSE 0 END AS isLiked
-    			FROM posts AS p WHERE user_id = :profileId
-
-                UNION
-
-                SELECT p.id, p.user_id, p.text, p.image, r.timestamp,
-                    p.timestamp AS originalTimestamp,
-                    (SELECT username FROM users WHERE id = p.user_id) as username,
-                    (SELECT username FROM users WHERE id = r.user_id) as reposter,
-                    0 as isReply,
-                    CASE WHEN EXISTS (SELECT * FROM likes WHERE user_id = :userId AND post_id = p.id) THEN 1 ELSE 0 END AS isLiked
-                FROM posts AS p
-                INNER JOIN reposts AS r
-                ON r.post_id = p.id
-                WHERE r.user_id = :profileId
-            )
-            result ORDER BY timestamp DESC;`,
-            { replacements: { profileId: id.profileId, userId: id.userId }, type: this.sequelize.QueryTypes.SELECT }
+            queries.posts,
+            { replacements: { profileId: [id.profileId], userId: id.userId }, type: this.sequelize.QueryTypes.SELECT }
 
         ).then(async (result) => {
             for (let post of result) {
