@@ -106,10 +106,10 @@ hr {
     margin-top: 0px;
     min-height: 110px;
     cursor: pointer;
-    transition: background-color 0.25s;
+    transition: background-color 0.15s;
 }
 
-.post:hover:not(.focus) {
+.post:hover {
     background-color: $hover;
 }
 
