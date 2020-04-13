@@ -1,5 +1,7 @@
 extends layout
 
+include mixins/post
+
 block content
 
   #sidebar.border-right
@@ -21,131 +23,7 @@ block content
             i.far.fa-image
           button.btn.btn-primary.mt-1(type='submit') Post
 
-  #feed
+  .feed
 
-    //- .post.container
-    //-   .avatar-sm
-    //-     img(src='/images/cat2.png')
-    //-   .h6 @harry2
-    //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-    //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-    //-     .btn-group.mr-2(role='group', aria-label='First group')
-    //-       button.btn.btn-outline-primary(type='button') Comment
-    //-       button.btn.btn-outline-primary(type='button') Like
-    //-       button.btn.btn-outline-primary(type='button') Repost
-    //-     .btn-group(role='group', aria-label='Second group')
-    //-       button.btn.btn-outline-secondary(type='button') 10m
-    //- hr
-
-    //- .post.container
-    //-   .avatar-sm
-    //-     img(src='/images/cat3.png')
-    //-   .h6 @harry3
-    //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-    //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-    //-     .btn-group.mr-2(role='group', aria-label='First group')
-    //-       button.btn.btn-outline-primary(type='button') Comment
-    //-       button.btn.btn-outline-primary(type='button') Like
-    //-       button.btn.btn-outline-primary(type='button') Repost
-    //-     .btn-group(role='group', aria-label='Second group')
-    //-       button.btn.btn-outline-secondary(type='button') 10m
-    //- hr
-
-    //- .post.container
-    //-   .avatar-sm
-    //-     img(src='/images/cat.png')
-    //-   .h6 @harry
-    //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-    //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-    //-     .btn-group.mr-2(role='group', aria-label='First group')
-    //-       button.btn.btn-outline-primary(type='button') Comment
-    //-       button.btn.btn-outline-primary(type='button') Like
-    //-       button.btn.btn-outline-primary(type='button') Repost
-    //-     .btn-group(role='group', aria-label='Second group')
-    //-       button.btn.btn-outline-secondary(type='button') 10m
-    //- hr
-
-    //- .post.container
-    //-   .avatar-sm
-    //-     img(src='/images/cat2.png')
-    //-   .h6 @harry2
-    //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-    //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-    //-     .btn-group.mr-2(role='group', aria-label='First group')
-    //-       button.btn.btn-outline-primary(type='button') Comment
-    //-       button.btn.btn-outline-primary(type='button') Like
-    //-       button.btn.btn-outline-primary(type='button') Repost
-    //-     .btn-group(role='group', aria-label='Second group')
-    //-       button.btn.btn-outline-secondary(type='button') 10m
-    //- hr
-
-    //- .post.container
-    //-   .avatar-sm
-    //-     img(src='/images/cat3.png')
-    //-   .h6 @harry3
-    //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-    //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-    //-     .btn-group.mr-2(role='group', aria-label='First group')
-    //-       button.btn.btn-outline-primary(type='button') Comment
-    //-       button.btn.btn-outline-primary(type='button') Like
-    //-       button.btn.btn-outline-primary(type='button') Repost
-    //-     .btn-group(role='group', aria-label='Second group')
-    //-       button.btn.btn-outline-secondary(type='button') 10m
-    //- hr
-
-    //- .post.container
-    //-   .avatar-sm
-    //-     img(src='/images/cat.png')
-    //-   .h6 @harry
-    //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-    //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-    //-     .btn-group.mr-2(role='group', aria-label='First group')
-    //-       button.btn.btn-outline-primary(type='button') Comment
-    //-       button.btn.btn-outline-primary(type='button') Like
-    //-       button.btn.btn-outline-primary(type='button') Repost
-    //-     .btn-group(role='group', aria-label='Second group')
-    //-       button.btn.btn-outline-secondary(type='button') 10m
-    //- hr
-
-    //- .post.container
-    //-   .avatar-sm
-    //-     img(src='/images/cat2.png')
-    //-   .h6 @harry2
-    //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-    //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-    //-     .btn-group.mr-2(role='group', aria-label='First group')
-    //-       button.btn.btn-outline-primary(type='button') Comment
-    //-       button.btn.btn-outline-primary(type='button') Like
-    //-       button.btn.btn-outline-primary(type='button') Repost
-    //-     .btn-group(role='group', aria-label='Second group')
-    //-       button.btn.btn-outline-secondary(type='button') 10m
-    //- hr
-
-    //- .post.container
-    //-   .avatar-sm
-    //-     img(src='/images/cat.png')
-    //-   .h6 @harry
-    //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-    //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-    //-     .btn-group.mr-2(role='group', aria-label='First group')
-    //-       button.btn.btn-outline-primary(type='button') Comment
-    //-       button.btn.btn-outline-primary(type='button') Like
-    //-       button.btn.btn-outline-primary(type='button') Repost
-    //-     .btn-group(role='group', aria-label='Second group')
-    //-       button.btn.btn-outline-secondary(type='button') 10m
-    //- hr
-
-    //- .post.container
-    //-   .avatar-sm
-    //-     img(src='/images/cat.png')
-    //-   .h6 @harry
-    //-   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec blandit nibh, nec efficitur nulla. Sed consequat purus ut elit ullamcorper, ut bibendum urna auctor. Fusce vulputate tincidunt libero, ac iaculis mauris.
-    //-   .btn-toolbar(role='toolbar' aria-label='Toolbar with button groups')
-    //-     .btn-group.mr-2(role='group', aria-label='First group')
-    //-       button.btn.btn-outline-primary(type='button') Comment
-    //-       button.btn.btn-outline-primary(type='button') Like
-    //-       button.btn.btn-outline-primary(type='button') Repost
-    //-     .btn-group(role='group', aria-label='Second group')
-    //-       button.btn.btn-outline-secondary(type='button') 10m
-    //- hr
-
+    each post in feed
+      +post(post)

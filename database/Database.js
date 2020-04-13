@@ -96,12 +96,28 @@ export default class Database {
         })
     }
 
+    /*========== Home page queries ==========*/
+
+    async getFeed(myId) {
+        let followings = await this.getFollowingsList(myId)
+        followings.push(myId)
+        return await this.getPosts({ id: followings, myId: myId })
+    }
+
+    getFollowingsList(id) {
+        return this.followings.findAll({ where: { userId: id } }).then(async (result) => {
+            return result.map(function(following) {
+                return following.followingId
+            })
+        })
+    }
+
     /*========== Profile page queries ==========*/
 
     getPosts(id) {
         return this.sequelize.query(
             queries.posts,
-            { replacements: { profileId: [id.profileId], userId: id.userId }, type: this.sequelize.QueryTypes.SELECT }
+            { replacements: { profileId: id.id, userId: id.myId }, type: this.sequelize.QueryTypes.SELECT }
 
         ).then(async (result) => {
             for (let post of result) {
@@ -115,18 +131,18 @@ export default class Database {
         })
     }
 
-    async getOriginalPoster(postId) {
-        return this.replies.findOne({ where: { replyId: postId } }).then(function(reply) {
-            return reply
+    async getOriginalPoster(id) {
+        return this.replies.findOne({ where: { replyId: id } }).then(function(result) {
+            return result
 
-        }).then(async (reply) => {
-            let originalPost = await this.getPostById(reply.postId)
+        }).then(async (result) => {
+            let originalPost = await this.getPostById(result.postId)
             return await this.idToUsername(originalPost.userId)
         })
     }
 
     getLikes(id) {
-        return this.likes.findAll({ where: { userId: id.profileId }, order: [['timestamp', 'DESC']] }).then(async (result) => {
+        return this.likes.findAll({ where: { userId: id.id }, order: [['timestamp', 'DESC']] }).then(async (result) => {
             let likes = []
 
             for (let like of result) {
@@ -135,7 +151,7 @@ export default class Database {
                 if (post) {
                     let user = await this.getUserById(post.userId)
 
-                    likes.push(await this.createPostObj(user, post, id.userId))
+                    likes.push(await this.createPostObj(user, post, id.myId))
                 }
             }
 
@@ -144,7 +160,7 @@ export default class Database {
     }
 
     getFollowers(id) {
-        return this.followings.findAll({ where: { followingId: id.profileId } }).then(async (result) => {
+        return this.followings.findAll({ where: { followingId: id.id } }).then(async (result) => {
             let followers = []
 
             for (let follower of result) {
@@ -159,7 +175,7 @@ export default class Database {
     }
 
     getFollowings(id) {
-        return this.followings.findAll({ where: { userId: id.profileId } }).then(async (result) => {
+        return this.followings.findAll({ where: { userId: id.id } }).then(async (result) => {
             let followings = []
 
             for (let following of result) {
@@ -201,28 +217,28 @@ export default class Database {
 
     /*========== Threads ==========*/
 
-    async getThread(id, postId) {
+    async getThread(id, myId) {
         let thread = { replyTo: null }
-        let focus = await this.getPostById(postId)
+        let focus = await this.getPostById(id)
         let focusPoster = await this.getUserById(focus.userId)
-        let isReply = await this.isReply(postId)
+        let isReply = await this.isReply(id)
 
         if (isReply) {
             let originalPost = await this.getPostById(isReply.postId)
             let originalPoster = await this.getUserById(originalPost.userId)
-            thread.replyTo = await this.createPostObj(originalPoster, originalPost, id)
+            thread.replyTo = await this.createPostObj(originalPoster, originalPost, myId)
         }
 
-        thread.focus = await this.createPostObj(focusPoster, focus, id)
+        thread.focus = await this.createPostObj(focusPoster, focus, myId)
 
-        return this.replies.findAll({ where: { postId: postId }, order: [['timestamp', 'DESC']] }).then(async (result) => {
+        return this.replies.findAll({ where: { postId: id }, order: [['timestamp', 'DESC']] }).then(async (result) => {
             let replies = []
 
             for (let reply of result) {
                 let post = await this.getPostById(reply.replyId)
                 let poster = await this.getUserById(post.userId)
 
-                replies.push(await this.createPostObj(poster, post, id))
+                replies.push(await this.createPostObj(poster, post, myId))
             }
 
             thread.replies = replies

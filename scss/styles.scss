@@ -92,15 +92,6 @@ hr {
     display: none;
 }
 
-/* Feed */
-
-#feed {
-    position: absolute;
-    width: 80%;
-    margin-left: 20%;
-    margin-top: 57px;
-}
-
 .post:not(.focus) {
     padding: 15px;
     margin-top: 0px;
@@ -195,6 +186,20 @@ hr {
     color: #bd1f1f;
 }
 
+/* Feed */
+
+.feed {
+    position: absolute;
+    width: 80%;
+    margin-left: 20%;
+    margin-top: 57px;
+}
+
+.feed .container {
+    max-width: 100%;
+    padding: 15px 12.5% 15px 12.5%;
+}
+
 /* Mobile scaling */
 
 @media (max-width: 768px) {
@@ -202,9 +207,13 @@ hr {
         display: none;
     }
 
-    #feed {
+    .feed {
         width: 100%;
         margin-left: 0%;
+    }
+
+    .feed .container {
+        padding: 15px;
     }
 
     .postButtons td {

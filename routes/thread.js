@@ -11,7 +11,7 @@ router.get('/', function(req, res) {
 })
 
 router.get('/:thread', async function(req, res) {
-    let thread = await req.app.get('db').getThread(req.session.userId, req.params.thread)
+    let thread = await req.app.get('db').getThread(req.params.thread, req.session.userId)
 
     res.render('thread', {
         title: `${thread.focus.text}`,

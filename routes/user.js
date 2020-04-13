@@ -16,11 +16,7 @@ async function renderProfile(req, res, contentType, template = contentType) {
         'followers': db.getFollowers.bind(db),
         'following': db.getFollowings.bind(db)
     }
-    let content = await contentTypes[contentType]({
-        profile: user.dataValues,
-        profileId: user.id,
-        userId: req.session.userId
-    })
+    let content = await contentTypes[contentType]({ id: user.id, myId: req.session.userId })
 
     let profile = {
         id: user.id,

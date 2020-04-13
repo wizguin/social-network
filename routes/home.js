@@ -5,12 +5,15 @@ import { check, validationResult } from 'express-validator'
 const router = express.Router()
 
 router.get('/', function(req, res) {
-    req.app.get('db').getUserById(req.session.userId).then(function(user) {
+    let db = req.app.get('db')
+
+    db.getUserById(req.session.userId).then(async function(user) {
         res.render('home', {
             title: 'Home',
             myUsername: req.session.username,
             user: user.dataValues,
-            avatar: user.id
+            avatar: user.id,
+            feed: await db.getFeed(req.session.userId)
         })
     })
 })
