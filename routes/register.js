@@ -1,11 +1,9 @@
 import express from 'express'
 import { check, validationResult } from 'express-validator'
 import bcrypt from 'bcrypt'
-import Database from '../database/Database'
 
 
 const router = express.Router()
-const database = new Database()
 const saltRounds = 10
 
 router.get('/', function(req, res) {
@@ -18,8 +16,8 @@ router.post('/', [
         .escape()
         .isLength({ min: 1, max: 12 })
         // Checking if username already exists in the database
-        .custom(function(value) {
-            return database.findByUsername(value).then(function(user) {
+        .custom(function(value, {req}) {
+            return req.app.get('db').findByUsername(value).then(function(user) {
                 if (user) return Promise.reject('That username is already in use.')
             })
         }),
@@ -31,8 +29,8 @@ router.post('/', [
         .isEmail()
         .normalizeEmail()
         // Checking if email address already exists in the database
-        .custom(function(value) {
-            return database.findByEmail(value).then(function(user) {
+        .custom(function(value, {req}) {
+            return req.app.get('db').findByEmail(value).then(function(user) {
                 if (user) return Promise.reject('That email address is already in use.')
             })
         }),
@@ -60,11 +58,12 @@ router.post('/', [
     bcrypt.hash(req.body.password, saltRounds, function(error, hash) {
         if (error) return res.render('register', { title: 'Sign Up', error: error })
 
-        database.users.create({
+        let db = req.app.get('db')
+        db.users.create({
             username: req.body.username,
             email:  req.body.email,
             password: hash,
-            registrationTimestamp: database.getTimestamp()
+            registrationTimestamp: db.getTimestamp()
         })
 
         res.render('register', { title: 'Sign Up', newAccount: true })

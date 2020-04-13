@@ -1,11 +1,9 @@
 import express from 'express'
 import { check, validationResult } from 'express-validator'
 import bcrypt from 'bcrypt'
-import Database from '../database/Database'
 
 
 const router = express.Router()
-const database = new Database()
 const saltRounds = 10
 const mimeTypes = {
     'image/jpeg': '.jpg',
@@ -73,7 +71,7 @@ router.post('/update-password', [
     bcrypt.hash(req.body.password, saltRounds, function(error, hash) {
         if (error) return res.redirect('/settings')
 
-        database.users.update(
+        req.app.get('db').users.update(
             { password: hash },
             { where: { id: req.session.userId }
         })
@@ -94,7 +92,7 @@ router.post('/update-email', [
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.redirect('/settings')
 
-    database.users.update(
+    req.app.get('db').users.update(
         { email: req.body.email },
         { where: { id: req.session.userId }
     })
@@ -111,7 +109,7 @@ router.post('/update-bio', [
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.redirect('/settings')
 
-    database.users.update(
+    req.app.get('db').users.update(
         { bio: req.body.bio },
         { where: { id: req.session.userId }
     })

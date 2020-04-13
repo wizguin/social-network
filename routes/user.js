@@ -1,23 +1,21 @@
 import express from 'express'
-import Database from '../database/Database'
 
 
 const router = express.Router()
-const database = new Database()
-
-const contentTypes = {
-    'posts': database.getAllPosts.bind(database),
-    'likes': database.getLikes.bind(database),
-    'followers': database.getFollowers.bind(database),
-    'following': database.getFollowings.bind(database)
-}
 
 async function renderProfile(req, res, contentType, template = contentType) {
     let isMyUser = (req.params.username == req.session.username) ? true : false
-    let user = await database.findByUsername(req.params.username)
+    let db = req.app.get('db')
+    let user = await db.findByUsername(req.params.username)
 
     if (!user) return res.redirect('/home')
 
+    let contentTypes = {
+        'posts': db.getAllPosts.bind(db),
+        'likes': db.getLikes.bind(db),
+        'followers': db.getFollowers.bind(db),
+        'following': db.getFollowings.bind(db)
+    }
     let content = await contentTypes[contentType]({
         profile: user.dataValues,
         profileId: user.id,
@@ -30,12 +28,12 @@ async function renderProfile(req, res, contentType, template = contentType) {
         bio: user.dataValues.bio,
         contentType: contentType,
         content: content,
-        postCount: await database.getPostCount(user.id),
-        likeCount: await database.getLikeCount(user.id),
-        followerCount: await database.getFollowerCount(user.id),
-        followingCount: await database.getFollowingCount(user.id)
+        postCount: await db.getPostCount(user.id),
+        likeCount: await db.getLikeCount(user.id),
+        followerCount: await db.getFollowerCount(user.id),
+        followingCount: await db.getFollowingCount(user.id)
     }
-    if (!isMyUser) profile.isFollowing = await database.isFollowing(req.session.userId, user.id)
+    if (!isMyUser) profile.isFollowing = await db.isFollowing(req.session.userId, user.id)
 
     res.render(template, {
         title: `${req.params.username}'s Profile`,
@@ -67,12 +65,13 @@ router.get('/:username/following', function(req, res) {
 
 router.post('/:username/follow', async function(req, res) {
     let isMyUser = (req.params.username == req.session.username) ? true : false
-    let profileId = await database.usernameToId(req.params.username)
-    let isFollowing = await database.isFollowing(req.session.userId, profileId)
+    let db = req.app.get('db')
+    let profileId = await db.usernameToId(req.params.username)
+    let isFollowing = await db.isFollowing(req.session.userId, profileId)
 
     if (isMyUser || isFollowing) return res.sendStatus(202)
 
-    database.followings.create({
+    db.followings.create({
         userId: req.session.userId,
         followingId:  profileId
     })
@@ -81,12 +80,13 @@ router.post('/:username/follow', async function(req, res) {
 
 router.post('/:username/unfollow', async function(req, res) {
     let isMyUser = (req.params.username == req.session.username) ? true : false
-    let profileId = await database.usernameToId(req.params.username)
-    let isFollowing = await database.isFollowing(req.session.userId, profileId)
+    let db = req.app.get('db')
+    let profileId = await db.usernameToId(req.params.username)
+    let isFollowing = await db.isFollowing(req.session.userId, profileId)
 
     if (isMyUser || !isFollowing) return res.sendStatus(202)
 
-    database.followings.destroy({
+    db.followings.destroy({
         where: {
             userId: req.session.userId,
             followingId:  profileId

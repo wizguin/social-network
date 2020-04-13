@@ -1,11 +1,9 @@
 import express from 'express'
 import { check, validationResult } from 'express-validator'
 import { v4 as uuidv4 } from 'uuid'
-import Database from '../database/Database'
 
 
 const router = express.Router()
-const database = new Database()
 const mimeTypes = {
     'image/jpeg': '.jpg',
     'image/png': '.png',
@@ -50,16 +48,17 @@ router.post('/new', [
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
+    let db = req.app.get('db')
     let p = {
         userId: req.session.userId,
         text: req.body.postText,
-        timestamp: database.getTimestamp()
+        timestamp: req.app.get('db').getTimestamp()
     }
 
     if (req.files) p.image = uploadImage(req, res)
 
-    let post = await database.posts.create(p)
-    let postObj = await database.createPostObj(await database.findById(req.session.userId), post, req.session.userId)
+    let post = await db.posts.create(p)
+    let postObj = await db.createPostObj(await db.findById(req.session.userId), post, req.session.userId)
 
     res.json({ status: 200, post: postObj })
 })
@@ -81,16 +80,17 @@ router.post('/comment', [
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
-    let post = await database.posts.create({
+    let db = req.app.get('db')
+    let post = await db.posts.create({
         userId: req.session.userId,
         text: req.body.postText,
-        timestamp: database.getTimestamp()
+        timestamp: db.getTimestamp()
     })
 
-    database.replies.create({
+    db.replies.create({
         postId: req.body.originalPost,
         replyId: post.id,
-        timestamp: database.getTimestamp()
+        timestamp: db.getTimestamp()
     })
     res.sendStatus(200)
 })
@@ -106,10 +106,11 @@ router.post('/like', [
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
-    database.likes.create({
+    let db = req.app.get('db')
+    db.likes.create({
         userId: req.session.userId,
         postId: req.body.postId,
-        timestamp: database.getTimestamp()
+        timestamp: db.getTimestamp()
     })
     res.sendStatus(200)
 })
@@ -125,7 +126,7 @@ router.post('/unlike', [
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
-    database.likes.destroy({
+    req.app.get('db').likes.destroy({
         where: {
             userId: req.session.userId,
             postId: req.body.postId
@@ -145,10 +146,11 @@ router.post('/repost', [
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
-    database.reposts.create({
+    let db = req.app.get('db')
+    db.reposts.create({
         userId: req.session.userId,
         postId: req.body.postId,
-        timestamp: database.getTimestamp()
+        timestamp: db.getTimestamp()
     })
     res.sendStatus(200)
 })

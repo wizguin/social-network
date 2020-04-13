@@ -5,6 +5,7 @@ import session from 'express-session'
 import logger from 'morgan'
 import nodeSassMiddleware from 'node-sass-middleware'
 import fileUpload from 'express-fileupload'
+
 // Routers
 import homeRouter from './routes/home'
 import loginRouter from './routes/login'
@@ -15,6 +16,9 @@ import logutRouter from './routes/logout'
 import postRouter from './routes/post'
 import threadRouter from './routes/thread'
 
+// Database
+import Database from './database/Database'
+
 
 const app = express()
 const sessionSettings = {
@@ -24,6 +28,9 @@ const sessionSettings = {
     resave: true,
     saveUninitalized: true
 }
+
+// Database setup
+app.set('db', new Database())
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'))
