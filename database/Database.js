@@ -283,7 +283,7 @@ export default class Database {
         let hours = `${date.getHours()}`.padStart(2, '0')
         let minutes = `${date.getMinutes()}`.padStart(2, '0')
 
-        return `${day}/${month}/${year} ${hours}:${minutes}`
+        return `${month}/${day}/${year} ${hours}:${minutes}`
     }
 
     isFollowing(id, followingId) {

@@ -162,15 +162,30 @@ function toggleImageButton() {
 }
 
 function createPostHtml(post) {
-    // let isRepost = (post.reposter) ? true : false
-    // let isReply = (post.originalPoster) ? true : false
+    let isRepost = (post.reposter) ? true : false
+    let isReply = (post.originalPoster) ? true : false
+
+    let repost = ''
+    if (isRepost) {
+        repost = `
+            <p class='repost-text'><i class='fas fa-arrow-right' aria-hidden='true'></i>
+                ${post.reposter} Reposted
+            </p>
+        `
+    } else if (isReply) {
+        repost = `
+            <p class='repost-text'><i class='far fa-comment' aria-hidden='true'></i>
+                ${post.username} Replied to ${post.originalPoster}
+            </p>
+        `
+    }
 
     let image = ''
     if (post.image) image = `<div class='post-image'><img src='/images/upload/${post.image}.webp'></div>`
 
     return `
         <div class='post container border-bottom' data-id='${post.id}'>
-
+            ${repost}
             <a href='/user/${post.username}'>
                 <div class='avatar-sm'><img src='/images/avatar/${post.avatar}.webp' onerror='this.src=&quot;/images/avatar/default.webp&quot;'></div>
             </a>
