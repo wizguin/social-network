@@ -2,7 +2,7 @@ mixin post(post)
   - var isRepost = (post.reposter) ? true : false
   - var isReply = (post.originalPoster) ? true : false
 
-  .post.container.border-bottom(data-id=post.id)
+  .post.linked.container.border-bottom(data-id=post.id)
 
     if isRepost
       p.repost-text

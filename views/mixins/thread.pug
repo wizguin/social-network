@@ -2,10 +2,10 @@ mixin post(post, focus=false)
 
   if focus
     .thread-focus(data-id=post.id)
-      .post.focus.container
+      .post.linked.focus.container
         +postBody(post)
   else
-    .post.container.border-bottom.border-left.border-right(data-id=post.id)
+    .post.linked.container.border-bottom.border-left.border-right(data-id=post.id)
       +postBody(post)
 
 mixin postBody(post)

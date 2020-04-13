@@ -88,7 +88,7 @@ window.onload = function() {
 
     /*========== Post handlers ==========*/
 
-    $('.post').click(function() {
+    $('.post.linked').click(function() {
         // Prevents thread focus from being clickable
         if (!($(this).parents('.thread-focus').length)) {
             window.location.href = `/thread/${$(this).data('id')}`
