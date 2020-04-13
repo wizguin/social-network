@@ -275,7 +275,15 @@ export default class Database {
     }
 
     timestampToDate(timestamp) {
-        return new Date(timestamp * 1000).toLocaleString()
+        let date = new Date(timestamp * 1000)
+
+        let day = date.getDate()
+        let month = date.getMonth()
+        let year = date.getFullYear().toString().substr(-2)
+        let hours = `${date.getHours()}`.padStart(2, '0')
+        let minutes = `${date.getMinutes()}`.padStart(2, '0')
+
+        return `${day}/${month}/${year} ${hours}:${minutes}`
     }
 
     isFollowing(id, followingId) {
