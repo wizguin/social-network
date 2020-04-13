@@ -108,28 +108,34 @@ export default class Database {
         return this.sequelize.query(
             `SELECT * FROM (
                 SELECT p.*,
-    				NULL AS originalTimestamp,
-                    CASE WHEN EXISTS (SELECT * FROM replies WHERE reply_id = p.id) THEN 1 ELSE 0 END AS isReply
-    			FROM posts AS p WHERE user_id = :id
+                    NULL AS originalTimestamp,
+                    (SELECT username FROM users WHERE id = p.user_id) as username,
+                    NULL AS reposter,
+                    CASE WHEN EXISTS (SELECT * FROM replies WHERE reply_id = p.id) THEN 1 ELSE 0 END AS isReply,
+                    CASE WHEN EXISTS (SELECT * FROM likes WHERE user_id = :userId AND post_id = p.id) THEN 1 ELSE 0 END AS isLiked
+    			FROM posts AS p WHERE user_id = :profileId
 
                 UNION
 
-                SELECT p.id, p.user_id, p.text, p.image, r.timestamp, p.timestamp AS originalTimestamp, 0 as isReply FROM posts AS p
+                SELECT p.id, p.user_id, p.text, p.image, r.timestamp,
+                    p.timestamp AS originalTimestamp,
+                    (SELECT username FROM users WHERE id = p.user_id) as username,
+                    (SELECT username FROM users WHERE id = r.user_id) as reposter,
+                    0 as isReply,
+                    CASE WHEN EXISTS (SELECT * FROM likes WHERE user_id = :userId AND post_id = p.id) THEN 1 ELSE 0 END AS isLiked
+                FROM posts AS p
                 INNER JOIN reposts AS r
                 ON r.post_id = p.id
-                WHERE r.user_id = :id
+                WHERE r.user_id = :profileId
             )
-            result ORDER BY timestamp DESC`,
-            { replacements: { id: id.profileId }, type: this.sequelize.QueryTypes.SELECT }
+            result ORDER BY timestamp DESC;`,
+            { replacements: { profileId: id.profileId, userId: id.userId }, type: this.sequelize.QueryTypes.SELECT }
 
         ).then(async (result) => {
             for (let post of result) {
-                post.username = await this.idToUsername(post.user_id)
                 post.avatar = post.user_id
-                post.isLiked = await this.isLiked(id.userId, post.id)
                 post.timestamp = this.timestampToDate(post.timestamp)
-
-                if (post.originalTimestamp) post.reposter = id.profile.username
+                if (post.originalTimestamp) post.originalTimestamp = this.timestampToDate(post.originalTimestamp)
                 if (post.isReply) post.originalPoster = await this.getOriginalPoster(post.id)
             }
 
@@ -144,12 +150,6 @@ export default class Database {
         }).then(async (reply) => {
             let originalPost = await this.getPostById(reply.postId)
             return await this.idToUsername(originalPost.userId)
-        })
-    }
-
-    getPostCount(id) {
-        return this.posts.count({ where: { userId: id } }).then(function(result) {
-            return result
         })
     }
 
@@ -171,12 +171,6 @@ export default class Database {
         })
     }
 
-    getLikeCount(id) {
-        return this.likes.count({ where: { userId: id } }).then(function(result) {
-            return result
-        })
-    }
-
     getFollowers(id) {
         return this.followings.findAll({ where: { followingId: id.profileId } }).then(async (result) => {
             let followers = []
@@ -192,12 +186,6 @@ export default class Database {
         })
     }
 
-    getFollowerCount(id) {
-        return this.followings.count({ where: { followingId: id } }).then(function(result) {
-            return result
-        })
-    }
-
     getFollowings(id) {
         return this.followings.findAll({ where: { userId: id.profileId } }).then(async (result) => {
             let followings = []
@@ -210,6 +198,26 @@ export default class Database {
             }
 
             return followings
+        })
+    }
+
+    /*========== Post counts ==========*/
+
+    getPostCount(id) {
+        return this.posts.count({ where: { userId: id } }).then(function(result) {
+            return result
+        })
+    }
+
+    getLikeCount(id) {
+        return this.likes.count({ where: { userId: id } }).then(function(result) {
+            return result
+        })
+    }
+
+    getFollowerCount(id) {
+        return this.followings.count({ where: { followingId: id } }).then(function(result) {
+            return result
         })
     }
 
