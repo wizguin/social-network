@@ -1,5 +1,3 @@
-/*========== On load ==========*/
-
 window.onload = function() {
 
     /*========== Profile page handlers ==========*/

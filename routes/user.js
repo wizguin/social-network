@@ -11,7 +11,7 @@ async function renderProfile(req, res, contentType, template = contentType) {
     if (!user) return res.redirect('/home')
 
     let contentTypes = {
-        'posts': db.getAllPosts.bind(db),
+        'posts': db.getPosts.bind(db),
         'likes': db.getLikes.bind(db),
         'followers': db.getFollowers.bind(db),
         'following': db.getFollowings.bind(db)

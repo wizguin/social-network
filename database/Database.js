@@ -84,6 +84,12 @@ export default class Database {
         })
     }
 
+    idToUsername(id) {
+        return this.findById(id).then(function(userData) {
+            return (userData.username)
+        })
+    }
+
     /*========== Post find queries ==========*/
 
     getPostById(id) {
@@ -98,66 +104,46 @@ export default class Database {
 
     /*========== Profile page queries ==========*/
 
-    // todo: could be joined into one query,
-    // need to add confirmation of repost,
-    // need to clean up a lot of functions here,
-    // bug: can like a repost multiple times
-    async getAllPosts(id) {
-        let posts = await this.getPosts(id)
-        let reposts = await this.getReposts(id)
-
-        let allPosts = posts.concat(reposts)
-        return allPosts.sort(function(a, b) {
-            if (a.timestamp > b.timestamp) return -1 // a takes precedence
-            if (a.timestamp < b.timestamp) return 1 // b takes precedence
-            return 0 // a and b are equal
-        })
-    }
-
     getPosts(id) {
-        return this.posts.findAll({ where: { userId: id.profileId }, order: [['timestamp', 'DESC']] }).then(async (result) => {
-            let posts = []
+        return this.sequelize.query(
+            `SELECT * FROM (
+                SELECT p.*,
+    				NULL AS originalTimestamp,
+                    CASE WHEN EXISTS (SELECT * FROM replies WHERE reply_id = p.id) THEN 1 ELSE 0 END AS isReply
+    			FROM posts AS p WHERE user_id = 25
 
+                UNION
+
+                SELECT p.id, p.user_id, p.text, p.image, r.timestamp, p.timestamp AS originalTimestamp, 0 as isReply FROM posts AS p
+                INNER JOIN reposts AS r
+                ON r.post_id = p.id
+                WHERE r.user_id = 25
+            )
+            result ORDER BY timestamp DESC`,
+            { replacements: { id: id.profileId }, type: this.sequelize.QueryTypes.SELECT }
+
+        ).then(async (result) => {
             for (let post of result) {
-                let isReply = await this.isReply(post.id)
+                post.username = await this.idToUsername(post.user_id)
+                post.avatar = post.user_id
+                post.isLiked = await this.isLiked(id.userId, post.id)
 
-                let p = await this.createPostObj(id.profile, post, id.userId)
-
-                if (isReply) {
-                    let originalPost = await this.getPostById(isReply.postId)
-                    let originalPoster = await this.findById(originalPost.userId)
-                    p.originalPoster = originalPoster.username
-                }
-
-                posts.push(p)
+                if (post.originalTimestamp) post.reposter = id.profile.username
+                if (post.isReply) post.originalPoster = await this.getOriginalPoster(post.id)
             }
 
-            return posts
+            return result
         })
     }
 
-    getReposts(id) {
-        return this.reposts.findAll({ where: { userId: id.profileId }, order: [['timestamp', 'DESC']] }).then(async (result) => {
-            let reposts = []
+    async getOriginalPoster(postId) {
+        return this.replies.findOne({ where: { replyId: postId } }).then(function(reply) {
+            return reply
 
-            for (let repost of result) {
-                let post = await this.getPostById(repost.postId)
-                let originalPoster = await this.findById(post.userId)
-
-                reposts.push({
-                    reposter: id.profile.username,
-                    username: originalPoster.username,
-                    avatar: post.userId,
-                    id: post.id,
-                    text: post.text,
-                    image: post.image,
-                    timestamp: this.timestampToDate(repost.timestamp),
-                    originalTimestamp: this.timestampToDate(post.timestamp),
-                    isLiked: await this.isLiked(id.userId, post.id)
-                })
-            }
-
-            return reposts
+        }).then(async (reply) => {
+            console.log(reply)
+            let originalPost = await this.getPostById(reply.postId)
+            return await this.idToUsername(originalPost.userId)
         })
     }
 
