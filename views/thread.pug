@@ -13,9 +13,7 @@ block content
 
     +post(focus, true)
 
-    if thread.length > 0
-      .container.border-top
-    #posts.container.p-0.mt-0.border-left.border-right
+    #posts.posts.container.p-0.mt-0.border-left.border-right
       each item in thread
         +post(item)
 

@@ -338,3 +338,7 @@ hr {
     display: flex;
     align-items: center;
 }
+
+.thread .posts .post:first-child {
+    border-top: 1px solid #495057;
+}
