@@ -1,0 +1,10 @@
+mixin postForm(action, id)
+  form(action=action, method='post', id=id, enctype='multipart/form-data')
+
+    .form-group
+
+      textarea.form-control(rows='5', name='postText')
+      button.image-button.btn.btn-primary.mr-1.mt-1(type='button')
+        i.far.fa-image
+      input.image-form.form-control-file(type='file', accept='image/x-png,image/gif,image/jpeg', name='image')
+      button.btn.btn-primary.mt-1(type='submit') Post

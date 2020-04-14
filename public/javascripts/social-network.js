@@ -36,23 +36,17 @@ window.onload = function() {
 
     /*========== Post form handlers ==========*/
 
-    let upload = true
     let originalPost = null
+    let button = {
+        '#post-form': true,
+        '#comment-form': true
+    }
 
-    $('#image-button').click(function() {
-        if (upload) {
-            $('#image-form').click() // Routes click from load room button to upload input
-        } else {
-            $('#image-form').val('') // Resets image input
-            toggleImageButton()
-        }
+    $('#post-form .image-button').click(function() { imageButtonClick('#post-form') })
+    $('#comment-form .image-button').click(function() { imageButtonClick('#comment-form') })
 
-        upload = !upload
-    })
-
-    $('#image-form').change(function(event) {
-        toggleImageButton()
-    })
+    $('#post-form .image-form').change(function() { toggleImageButton('#post-form') })
+    $('#comment-form .image-form').change(function() { toggleImageButton('#comment-form') })
 
     $('#post-form').submit(function(event) {
         event.preventDefault()
@@ -64,7 +58,7 @@ window.onload = function() {
             processData: false,
             contentType: false,
             success: (response) => {
-                $(this)[0].reset()
+                resetForm('#post-form', $(this)[0])
                 $('#posts').prepend(createPostHtml(response.post))
             }
         })
@@ -73,15 +67,19 @@ window.onload = function() {
     $('#comment-form').submit(function(event) {
         event.preventDefault()
         $('#commentModal').modal('hide')
-        console.log(originalPost)
+
+        let formData = new FormData(this)
+        formData.append('originalPost', originalPost)
 
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
-            data: $(this).serialize() + `&originalPost=${originalPost}`,
+            data: formData,
+            processData: false,
+            contentType: false,
             success: (response) => {
-                $(this)[0].reset()
-                console.log(response)
+                resetForm('#comment-form', $(this)[0])
+                $('#posts').prepend(createPostHtml(response.post))
             }
         })
     })
@@ -148,58 +146,81 @@ window.onload = function() {
             }
         })
     })
-}
 
-/*========== Functions ==========*/
+    /*========== Functions ==========*/
 
-function toggleImageButton() {
-    $('#image-button').toggleClass('btn-primary')
-    $('#image-button').toggleClass('btn-danger')
-    $('#image-button i').toggleClass('far fa-image')
-    $('#image-button i').toggleClass('fas fa-times')
-}
+    function imageButtonClick(form) {
+        if (button[form]) {
+            $(`${form} .image-form`).click() // Routes click from load room button to upload input
+        } else {
+            $(`${form} .image-form`).val('') // Resets image input
+            toggleImageButton(form)
+        }
 
-function createPostHtml(post) {
-    let isRepost = (post.reposter) ? true : false
-    let isReply = (post.originalPoster) ? true : false
-
-    let repost = ''
-    if (isRepost) {
-        repost = `
-            <p class='repost-text'><i class='fas fa-arrow-right' aria-hidden='true'></i>
-                ${post.reposter} Reposted
-            </p>
-        `
-    } else if (isReply) {
-        repost = `
-            <p class='repost-text'><i class='far fa-comment' aria-hidden='true'></i>
-                ${post.username} Replied to ${post.originalPoster}
-            </p>
-        `
+        button[form] = !button[form]
+        console.log(button)
     }
 
-    let image = ''
-    if (post.image) image = `<div class='post-image'><img src='/images/upload/${post.image}.webp'></div>`
+    function toggleImageButton(form) {
+        $(`${form} .image-button`).toggleClass('btn-primary')
+        $(`${form} .image-button`).toggleClass('btn-danger')
+        $(`${form} .image-button i`).toggleClass('far fa-image')
+        $(`${form} .image-button i`).toggleClass('fas fa-times')
+    }
 
-    return `
-        <div class='post container border-bottom' data-id='${post.id}'>
-            ${repost}
-            <a href='/user/${post.username}'>
-                <div class='avatar-sm'><img src='/images/avatar/${post.avatar}.webp' onerror='this.src=&quot;/images/avatar/default.webp&quot;'></div>
-            </a>
-            <div class='h6'><a href='/user/${post.username}'>${post.username}</a></div>
-            <p>${post.text}</p>
-            ${image}
-            <table class='post-buttons'>
-                <tbody>
-                    <tr>
-                        <td class='i far fa-comment comment-button' data-id='${post.id}' data-toggle='modal' aria-hidden='true'></td>
-                        <td class='i far fa-heart like-button' data-id='${post.id}' data-action='like' aria-hidden='true'></td>
-                        <td class='i fas fa-arrow-right repost-button' data-id='${post.id}' aria-hidden='true'></td>
-                        <td>${post.timestamp}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    `
+    function resetForm(formId, form) {
+        form.reset()
+        button[formId] = true
+        $(`${formId} .image-form`).val('')
+
+        $(`${formId} .image-button`).addClass('btn-primary')
+        $(`${formId} .image-button`).removeClass('btn-danger')
+        $(`${formId} .image-button i`).addClass('far fa-image')
+        $(`${formId} .image-button i`).removeClass('fas fa-times')
+    }
+
+    function createPostHtml(post) {
+        let isRepost = (post.reposter) ? true : false
+        let isReply = (post.originalPoster) ? true : false
+
+        let repost = ''
+        if (isRepost) {
+            repost = `
+                <p class='repost-text'><i class='fas fa-arrow-right' aria-hidden='true'></i>
+                    ${post.reposter} Reposted
+                </p>
+            `
+        } else if (isReply) {
+            repost = `
+                <p class='repost-text'><i class='far fa-comment' aria-hidden='true'></i>
+                    ${post.username} Replied to ${post.originalPoster}
+                </p>
+            `
+        }
+
+        let image = ''
+        if (post.image) image = `<div class='post-image'><img src='/images/upload/${post.image}.webp'></div>`
+
+        return `
+            <div class='post container border-bottom' data-id='${post.id}'>
+                ${repost}
+                <a href='/user/${post.username}'>
+                    <div class='avatar-sm'><img src='/images/avatar/${post.avatar}.webp' onerror='this.src=&quot;/images/avatar/default.webp&quot;'></div>
+                </a>
+                <div class='h6'><a href='/user/${post.username}'>${post.username}</a></div>
+                <p>${post.text}</p>
+                ${image}
+                <table class='post-buttons'>
+                    <tbody>
+                        <tr>
+                            <td class='i far fa-comment comment-button' data-id='${post.id}' data-toggle='modal' aria-hidden='true'></td>
+                            <td class='i far fa-heart like-button' data-id='${post.id}' data-action='like' aria-hidden='true'></td>
+                            <td class='i fas fa-arrow-right repost-button' data-id='${post.id}' aria-hidden='true'></td>
+                            <td>${post.timestamp}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `
+    }
 }

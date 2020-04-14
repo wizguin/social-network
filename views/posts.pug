@@ -1,6 +1,7 @@
 extends user
 
 include mixins/post
+include mixins/modals
 
 block profileContent
 
@@ -13,22 +14,4 @@ block profileContent
 
   //---------- Modals ----------//
 
-  //- Comment modal
-  #commentModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='commentModalLabel', aria-hidden='true')
-
-    .modal-dialog(role='document')
-
-      .modal-content
-
-        .modal-header
-          h5#commentModalLabel.modal-title Comment
-          button.close(type='button', data-dismiss='modal', aria-label='Close')
-            span(aria-hidden='true') ×
-
-        .modal-body
-          form(action='/post/comment', method='post', id='comment-form')
-            .form-group
-              textarea.form-control(rows='5', name='postText')
-              button.btn.btn-primary.mr-1.mt-1(type='button')
-                i.far.fa-image
-              button.btn.btn-primary.mt-1(type='submit') Post
+  +commentModal()

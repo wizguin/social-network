@@ -1,5 +1,7 @@
 extends layout
 
+include mixins/forms
+
 block content
 
   //---------- Profile header ----------//
@@ -35,13 +37,7 @@ block content
         .h4.float-left New Post
 
         //- Post form
-        form(action='/post/new', method='post',  id='post-form', enctype='multipart/form-data')
-          .form-group
-            textarea.form-control(rows='5', name='postText')
-            button#image-button.btn.btn-primary.mr-1.mt-1(type='button')
-              i.far.fa-image
-            input#image-form.image-form.form-control-file(type='file', accept='image/x-png,image/gif,image/jpeg', name='image')
-            button.btn.btn-primary.mt-1(type='submit') Post
+        +postForm('/post/new', 'post-form')
 
     //---------- Profile posts ----------//
 

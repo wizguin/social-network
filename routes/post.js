@@ -81,18 +81,23 @@ router.post('/comment', [
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
     let db = req.app.get('db')
-    let post = await db.posts.create({
+    let p = {
         userId: req.session.userId,
         text: req.body.postText,
         timestamp: db.getTimestamp()
-    })
+    }
+
+    if (req.files) p.image = uploadImage(req, res)
+    let post = await db.posts.create(p)
+    let postObj = await db.createPostObj(await db.getUserById(req.session.userId), post, req.session.userId)
 
     db.replies.create({
         postId: req.body.originalPost,
         replyId: post.id,
         timestamp: db.getTimestamp()
     })
-    res.sendStatus(200)
+
+    res.json({ status: 200, post: postObj })
 })
 
 router.post('/like', [
