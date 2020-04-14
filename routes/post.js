@@ -91,11 +91,13 @@ router.post('/comment', [
     let post = await db.posts.create(p)
     let postObj = await db.createPostObj(await db.getUserById(req.session.userId), post, req.session.userId)
 
-    db.replies.create({
+    await db.replies.create({
         postId: req.body.originalPost,
         replyId: post.id,
         timestamp: db.getTimestamp()
     })
+
+    postObj.originalPoster = await db.getOriginalPoster(post.id)
 
     res.json({ status: 200, post: postObj })
 })
