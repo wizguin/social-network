@@ -1,8 +1,12 @@
 extends layout
 
 include mixins/post
+include mixins/forms
+include mixins/modals
 
 block content
+
+  //- Sidebar
 
   #sidebar.border-right
     .container.float-left.mb-3
@@ -16,14 +20,15 @@ block content
 
     .container.float-left
       .h4.float-left New Post
-      form(action='/post/new', method='post', id='post-form')
-        .form-group
-          textarea.form-control(rows='5', name='postText')
-          button.btn.btn-primary.mr-1.mt-1(type='button')
-            i.far.fa-image
-          button.btn.btn-primary.mt-1(type='submit') Post
+      +postForm('/post/new', 'post-form')
 
-  .feed
+  //- Feed
+
+  .feed#posts
 
     each post in feed
       +post(post)
+
+  //- Modals
+
+  +commentModal()

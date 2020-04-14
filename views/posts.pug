@@ -5,13 +5,13 @@ include mixins/modals
 
 block profileContent
 
-  //---------- Profile posts ----------//
+  //- Posts
 
   #posts.card-body.border-left.border-right
 
     each post in profile.content
       +post(post)
 
-  //---------- Modals ----------//
+  //- Modals
 
   +commentModal()

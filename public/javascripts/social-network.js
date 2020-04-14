@@ -202,7 +202,7 @@ window.onload = function() {
         if (post.image) image = `<div class='post-image'><img src='/images/upload/${post.image}.webp'></div>`
 
         return `
-            <div class='post container border-bottom' data-id='${post.id}'>
+            <div class='post linked container border-bottom' data-id='${post.id}'>
                 ${repost}
                 <a href='/user/${post.username}'>
                     <div class='avatar-sm'><img src='/images/avatar/${post.avatar}.webp' onerror='this.src=&quot;/images/avatar/default.webp&quot;'></div>

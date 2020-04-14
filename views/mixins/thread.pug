@@ -5,7 +5,7 @@ mixin post(post, focus=false)
       .post.linked.focus.container
         +postBody(post)
   else
-    .post.linked.container.border-bottom.border-left.border-right(data-id=post.id)
+    .post.linked.container.border-bottom(data-id=post.id)
       +postBody(post)
 
 mixin postBody(post)
