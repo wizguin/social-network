@@ -1,16 +1,31 @@
 include forms
 
 mixin commentModal()
-  #commentModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='commentModalLabel', aria-hidden='true')
+  #comment-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='label', aria-hidden='true')
 
     .modal-dialog(role='document')
 
       .modal-content
 
         .modal-header
-          h5#commentModalLabel.modal-title Comment
+          h5#label.modal-title Comment
           button.close(type='button', data-dismiss='modal', aria-label='Close')
             span(aria-hidden='true') ×
 
         .modal-body
           +postForm('/post/comment', 'comment-form')
+
+mixin repostModal()
+  #repost-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='label', aria-hidden='true')
+
+    .modal-dialog(role='document')
+
+      .modal-content
+
+        .modal-header
+          h5#label.modal-title Confirm Repost
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') ×
+
+        .modal-body
+          button#repost-confirm.btn.btn-primary(type='button') Repost

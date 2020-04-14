@@ -1,5 +1,15 @@
 window.onload = function() {
 
+    let originalPost = {
+        comment: '',
+        repost: ''
+    }
+
+    let button = {
+        '#post-form': true,
+        '#comment-form': true
+    }
+
     /*========== Profile page handlers ==========*/
 
     $('#profile-follow-button').click(function() {
@@ -36,12 +46,6 @@ window.onload = function() {
 
     /*========== Post form handlers ==========*/
 
-    let originalPost = null
-    let button = {
-        '#post-form': true,
-        '#comment-form': true
-    }
-
     $('#post-form .image-button').click(function() { imageButtonClick('#post-form') })
     $('#comment-form .image-button').click(function() { imageButtonClick('#comment-form') })
 
@@ -66,10 +70,10 @@ window.onload = function() {
 
     $('#comment-form').submit(function(event) {
         event.preventDefault()
-        $('#commentModal').modal('hide')
+        $('#comment-modal').modal('hide')
 
         let formData = new FormData(this)
-        formData.append('originalPost', originalPost)
+        formData.append('originalPost', originalPost.comment)
 
         $.ajax({
             url: $(this).attr('action'),
@@ -99,8 +103,8 @@ window.onload = function() {
     })
 
     $('.comment-button').click(function() {
-        originalPost = $(this).data('id')
-        $('#commentModal').modal('show')
+        originalPost.comment = $(this).data('id')
+        $('#comment-modal').modal('show')
     })
 
     $('.like-button').click(function() {
@@ -135,14 +139,19 @@ window.onload = function() {
     })
 
     $('.repost-button').click(function() {
-        let postId = $(this).data('id')
+        originalPost.repost = $(this).data('id')
+        $('#repost-modal').modal('show')
+    })
+
+    $('#repost-confirm').click(function() {
+        $('#repost-modal').modal('hide')
 
         $.ajax({
             url: '/post/repost',
             type: 'post',
-            data: { postId: postId },
+            data: { postId: originalPost.repost },
             success: (response) => {
-                console.log(response)
+                $('#posts').prepend(createPostHtml(response.post))
             }
         })
     })

@@ -147,7 +147,7 @@ router.post('/repost', [
         .isLength({ min: 1 })
         .isNumeric()
 
-], function(req, res) {
+], async function(req, res) {
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
@@ -157,7 +157,10 @@ router.post('/repost', [
         postId: req.body.postId,
         timestamp: db.getTimestamp()
     })
-    res.sendStatus(200)
+
+    let postObj = await db.createPostObj(await db.getUserById(req.session.userId), await db.getPostById(req.body.postId), req.session.userId)
+
+    res.json({ status: 200, post: postObj })
 })
 
 module.exports = router
