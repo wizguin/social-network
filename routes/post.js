@@ -158,7 +158,13 @@ router.post('/repost', [
         timestamp: db.getTimestamp()
     })
 
-    let postObj = await db.createPostObj(await db.getUserById(req.session.userId), await db.getPostById(req.body.postId), req.session.userId)
+    let post = await db.getPostById(req.body.postId)
+    let originalPoster = await db.getUserById(post.userId)
+
+    let postObj = await db.createPostObj(originalPoster, post, req.session.userId)
+    postObj.reposter = (await db.getUserById(req.session.userId)).username
+
+    console.log(postObj)
 
     res.json({ status: 200, post: postObj })
 })

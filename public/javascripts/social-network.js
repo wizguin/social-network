@@ -151,7 +151,7 @@ window.onload = function() {
             type: 'post',
             data: { postId: originalPost.repost },
             success: (response) => {
-                //$('#posts').prepend(createPostHtml(response.post))
+                $('#posts').prepend(createPostHtml(response.post))
             }
         })
     })
@@ -193,6 +193,9 @@ window.onload = function() {
         let isReply = (post.originalPoster) ? true : false
 
         let repost = ''
+        let image = ''
+        let like = ''
+
         if (isRepost) {
             repost = `
                 <p class='repost-text'><i class='fas fa-arrow-right' aria-hidden='true'></i>
@@ -207,8 +210,13 @@ window.onload = function() {
             `
         }
 
-        let image = ''
         if (post.image) image = `<div class='post-image'><img src='/images/upload/${post.image}.webp'></div>`
+
+        if (post.isLiked) {
+            like = `<td class='i fas fa-heart liked like-button' data-id='${post.id}' data-action='unlike' aria-hidden='true'></td>`
+        } else {
+            like = `<td class='i far fa-heart like-button' data-id='${post.id}' data-action='like' aria-hidden='true'></td>`
+        }
 
         return `
             <div class='post linked container border-bottom' data-id='${post.id}'>
@@ -223,7 +231,7 @@ window.onload = function() {
                     <tbody>
                         <tr>
                             <td class='i far fa-comment comment-button' data-id='${post.id}' data-toggle='modal' aria-hidden='true'></td>
-                            <td class='i far fa-heart like-button' data-id='${post.id}' data-action='like' aria-hidden='true'></td>
+                            ${like}
                             <td class='i fas fa-arrow-right repost-button' data-id='${post.id}' aria-hidden='true'></td>
                             <td>${post.timestamp}</td>
                         </tr>
