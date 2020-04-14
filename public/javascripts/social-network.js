@@ -151,7 +151,7 @@ window.onload = function() {
             type: 'post',
             data: { postId: originalPost.repost },
             success: (response) => {
-                $('#posts').prepend(createPostHtml(response.post))
+                //$('#posts').prepend(createPostHtml(response.post))
             }
         })
     })
