@@ -83,6 +83,11 @@ window.onload = function() {
             contentType: false,
             success: (response) => {
                 resetForm('#comment-form', $(this)[0])
+
+                if (window.location.pathname.startsWith('/thread')) {
+                    if (window.location.pathname.split('/')[2] != originalPost.comment) return
+                }
+
                 $('#posts').prepend(createPostHtml(response.post))
             }
         })
