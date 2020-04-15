@@ -1,4 +1,6 @@
 import Sequelize from 'sequelize'
+import pug from 'pug'
+import path from 'path'
 
 import * as queries from './queries'
 
@@ -38,6 +40,9 @@ export default class Database {
             .catch(function(error) {
                 console.error('Unable to connect to the database: ', error)
             })
+
+        // Pagination
+        this.limit = 10
     }
 
     /*========== User data find queries ==========*/
@@ -98,10 +103,10 @@ export default class Database {
 
     /*========== Home page queries ==========*/
 
-    async getFeed(myId) {
+    async getFeed(myId, page) {
         let followings = await this.getFollowingsList(myId)
         followings.push(myId)
-        return await this.getPosts({ id: followings, myId: myId })
+        return await this.getPosts({ id: followings, myId: myId }, page)
     }
 
     getFollowingsList(id) {
@@ -114,10 +119,17 @@ export default class Database {
 
     /*========== Profile page queries ==========*/
 
-    getPosts(id) {
+    getPosts(id, page) {
         return this.sequelize.query(
-            queries.posts,
-            { replacements: { profileId: id.id, userId: id.myId }, type: this.sequelize.QueryTypes.SELECT }
+            queries.posts, {
+                replacements: {
+                    profileId: id.id,
+                    userId: id.myId,
+                    limit: this.limit,
+                    offset: page * this.limit
+                },
+                type: this.sequelize.QueryTypes.SELECT
+            }
 
         ).then(async (result) => {
             for (let post of result) {
@@ -141,8 +153,14 @@ export default class Database {
         })
     }
 
-    getLikes(id) {
-        return this.likes.findAll({ where: { userId: id.id }, order: [['timestamp', 'DESC']] }).then(async (result) => {
+    getLikes(id, page) {
+        return this.likes.findAll({
+            limit: this.limit,
+            offset: page * this.limit,
+            where: { userId: id.id },
+            order: [['timestamp', 'DESC']]
+
+        }).then(async (result) => {
             let likes = []
 
             for (let like of result) {
@@ -159,8 +177,13 @@ export default class Database {
         })
     }
 
-    getFollowers(id) {
-        return this.followings.findAll({ where: { followingId: id.id } }).then(async (result) => {
+    getFollowers(id, page) {
+        return this.followings.findAll({
+            limit: this.limit,
+            offset: page * this.limit,
+            where: { followingId: id.id }
+
+        }).then(async (result) => {
             let followers = []
 
             for (let follower of result) {
@@ -174,8 +197,13 @@ export default class Database {
         })
     }
 
-    getFollowings(id) {
-        return this.followings.findAll({ where: { userId: id.id } }).then(async (result) => {
+    getFollowings(id, page) {
+        return this.followings.findAll({
+            limit: this.limit,
+            offset: page * this.limit,
+            where: { userId: id.id }
+
+        }).then(async (result) => {
             let followings = []
 
             for (let following of result) {
@@ -217,7 +245,7 @@ export default class Database {
 
     /*========== Threads ==========*/
 
-    async getThread(id, myId) {
+    async getThread(id, myId, page) {
         let thread = { replyTo: null }
         let focus = await this.getPostById(id)
         let focusPoster = await this.getUserById(focus.userId)
@@ -231,7 +259,13 @@ export default class Database {
 
         thread.focus = await this.createPostObj(focusPoster, focus, myId)
 
-        return this.replies.findAll({ where: { postId: id }, order: [['timestamp', 'DESC']] }).then(async (result) => {
+        return this.replies.findAll({
+            limit: this.limit,
+            offset: page * this.limit,
+            where: { postId: id },
+            order: [['timestamp', 'DESC']]
+
+        }).then(async (result) => {
             let replies = []
 
             for (let reply of result) {
@@ -292,6 +326,13 @@ export default class Database {
             timestamp: this.timestampToDate(post.timestamp),
             isLiked: await this.isLiked(userId, post.id)
         }
+    }
+
+    renderMixin(file, mixin, args) {
+        let include = path.join(__dirname, `../views/mixins/${file}`)
+        let code = `include ${include}\n` +
+                   `+${mixin}(args)`
+        return pug.compile(code, { filename: 'tmp.pug' } )({ args: args })
     }
 
 }

@@ -60,7 +60,7 @@ router.post('/new', [
     let post = await db.posts.create(p)
     let postObj = await db.createPostObj(await db.getUserById(req.session.userId), post, req.session.userId)
 
-    res.json({ status: 200, post: postObj })
+    res.json({ status: 200, post: db.renderMixin('post', 'post', postObj) })
 })
 
 router.post('/comment', [
@@ -99,7 +99,7 @@ router.post('/comment', [
 
     postObj.originalPoster = await db.getOriginalPoster(post.id)
 
-    res.json({ status: 200, post: postObj })
+    res.json({ status: 200, post: db.renderMixin('post', 'post', postObj) })
 })
 
 router.post('/like', [
@@ -166,9 +166,7 @@ router.post('/repost', [
     let postObj = await db.createPostObj(originalPoster, post, req.session.userId)
     postObj.reposter = (await db.getUserById(req.session.userId)).username
 
-    console.log(postObj)
-
-    res.json({ status: 200, post: postObj })
+    res.json({status: 200, post: db.renderMixin('post', 'post', postObj), reposter: postObj.reposter })
 })
 
 module.exports = router

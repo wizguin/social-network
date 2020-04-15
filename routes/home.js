@@ -13,7 +13,7 @@ router.get('/', function(req, res) {
             myUsername: req.session.username,
             user: user.dataValues,
             avatar: user.id,
-            feed: await db.getFeed(req.session.userId)
+            feed: await db.getFeed(req.session.userId, 0)
         })
     })
 })

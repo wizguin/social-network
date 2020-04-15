@@ -21,4 +21,4 @@ export const posts =
         ON r.post_id = p.id
         WHERE r.user_id IN (:profileId)
     )
-    result ORDER BY timestamp DESC;`
+    result ORDER BY timestamp DESC LIMIT :limit OFFSET :offset;`

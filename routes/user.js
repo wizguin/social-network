@@ -3,7 +3,7 @@ import express from 'express'
 
 const router = express.Router()
 
-async function renderProfile(req, res, contentType, template = contentType) {
+async function renderProfile(req, res, contentType, template = contentType, page = 0) {
     let isMyUser = (req.params.username == req.session.username) ? true : false
     let db = req.app.get('db')
     let user = await db.getUserByUsername(req.params.username)
@@ -16,7 +16,7 @@ async function renderProfile(req, res, contentType, template = contentType) {
         'followers': db.getFollowers.bind(db),
         'following': db.getFollowings.bind(db)
     }
-    let content = await contentTypes[contentType]({ id: user.id, myId: req.session.userId })
+    let content = await contentTypes[contentType]({ id: user.id, myId: req.session.userId }, page)
 
     let profile = {
         id: user.id,
@@ -89,6 +89,30 @@ router.post('/:username/unfollow', async function(req, res) {
         }
     })
     res.sendStatus(200)
+})
+
+/*========== Pagination routes ==========*/
+
+router.post('/:username/load', async function(req, res) {
+    let db = req.app.get('db')
+    let id = await db.usernameToId(req.params.username)
+    let posts = await db.getPosts({ id: id, myId: req.session.userId }, req.body.page)
+
+    console.log(db.renderMixin('post', 'posts', posts))
+    res.json({ status: 200, posts: db.renderMixin('post', 'posts', posts) })
+})
+
+router.post('/:username/likes/load', function(req, res) {
+    console.log('test2')
+    renderProfile(req, res, 'likes', 'posts')
+})
+
+router.post('/:username/followers/load', function(req, res) {
+    renderProfile(req, res, 'followers')
+})
+
+router.post('/:username/following/load', function(req, res) {
+    renderProfile(req, res, 'following')
 })
 
 module.exports = router

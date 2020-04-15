@@ -63,7 +63,7 @@ window.onload = function() {
             contentType: false,
             success: (response) => {
                 resetForm('#post-form', $(this)[0])
-                $('#posts').prepend(createPostHtml(response.post))
+                $('#posts').prepend(response.post)
             }
         })
     })
@@ -89,7 +89,7 @@ window.onload = function() {
                     if (window.location.pathname.split('/')[2] != originalPost.comment) return
                 }
 
-                $('#posts').prepend(createPostHtml(response.post))
+                $('#posts').prepend(response.post)
             }
         })
     })
@@ -157,8 +157,23 @@ window.onload = function() {
             type: 'post',
             data: { postId: originalPost.repost },
             success: (response) => {
-                let acceptedUrls = ['/home', `/user/${response.post.reposter}`]
-                if (acceptedUrls.includes(window.location.pathname)) $('#posts').prepend(createPostHtml(response.post))
+                let acceptedUrls = ['/home', `/user/${response.reposter}`]
+                if (acceptedUrls.includes(window.location.pathname)) $('#posts').prepend(response.post)
+            }
+        })
+    })
+
+    /*========== Pagination ==========*/
+
+
+    $('#load-more').click(function() {
+        $.ajax({
+            url: `${window.location.pathname}/load`,
+            type: 'post',
+            data: { page: $(this).data('page') },
+            success: (response) => {
+                $('#posts').append(response.posts)
+                $(this).data().page ++
             }
         })
     })
@@ -174,7 +189,6 @@ window.onload = function() {
         }
 
         button[form] = !button[form]
-        console.log(button)
     }
 
     function toggleImageButton(form) {
@@ -195,56 +209,4 @@ window.onload = function() {
         $(`${formId} .image-button i`).removeClass('fas fa-times')
     }
 
-    function createPostHtml(post) {
-        let isRepost = (post.reposter) ? true : false
-        let isReply = (post.originalPoster) ? true : false
-
-        let repost = ''
-        let image = ''
-        let like = ''
-
-        if (isRepost) {
-            repost = `
-                <p class='repost-text'><i class='fas fa-arrow-right' aria-hidden='true'></i>
-                    ${post.reposter} Reposted
-                </p>
-            `
-        } else if (isReply) {
-            repost = `
-                <p class='repost-text'><i class='far fa-comment' aria-hidden='true'></i>
-                    ${post.username} Replied to ${post.originalPoster}
-                </p>
-            `
-        }
-
-        if (post.image) image = `<div class='post-image'><img src='/images/upload/${post.image}.webp'></div>`
-
-        if (post.isLiked) {
-            like = `<td class='i fas fa-heart liked like-button' data-id='${post.id}' data-action='unlike' aria-hidden='true'></td>`
-        } else {
-            like = `<td class='i far fa-heart like-button' data-id='${post.id}' data-action='like' aria-hidden='true'></td>`
-        }
-
-        return `
-            <div class='post linked container border-bottom' data-id='${post.id}'>
-                ${repost}
-                <a href='/user/${post.username}'>
-                    <div class='avatar-sm'><img src='/images/avatar/${post.avatar}.webp' onerror='this.src=&quot;/images/avatar/default.webp&quot;'></div>
-                </a>
-                <div class='h6'><a href='/user/${post.username}'>${post.username}</a></div>
-                <p>${post.text}</p>
-                ${image}
-                <table class='post-buttons'>
-                    <tbody>
-                        <tr>
-                            <td class='i far fa-comment comment-button' data-id='${post.id}' data-toggle='modal' aria-hidden='true'></td>
-                            ${like}
-                            <td class='i fas fa-arrow-right repost-button' data-id='${post.id}' aria-hidden='true'></td>
-                            <td>${post.timestamp}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        `
-    }
 }

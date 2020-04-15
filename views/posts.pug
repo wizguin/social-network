@@ -8,9 +8,9 @@ block profileContent
   //- Posts
 
   #posts.card-body.border-left.border-right
+    +posts(profile.content)
 
-    each post in profile.content
-      +post(post)
+  button#load-more.btn.btn-success.mt-3(type='button', data-page=1) Load More
 
   //- Modals
 
