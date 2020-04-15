@@ -85,6 +85,7 @@ window.onload = function() {
                 resetForm('#comment-form', $(this)[0])
 
                 if (window.location.pathname.startsWith('/thread')) {
+                    response.post.originalPoster = null
                     if (window.location.pathname.split('/')[2] != originalPost.comment) return
                 }
 
