@@ -90,7 +90,7 @@ window.onload = function() {
 
     /*========== Post handlers ==========*/
 
-    $('.post.linked').click(function() {
+    $(document).on('click', '.post.linked', function() {
         // Prevents thread focus from being clickable
         if (!($(this).parents('.thread-focus').length)) {
             window.location.href = `/thread/${$(this).data('id')}`
@@ -98,16 +98,16 @@ window.onload = function() {
     })
 
     // Stops post buttons directing to thread
-    $('.post .post-buttons').click(function(event) {
+    $(document).on('click', '.post .post-buttons', function(event) {
         event.stopPropagation()
     })
 
-    $('.comment-button').click(function() {
+    $(document).on('click', '.comment-button', function() {
         originalPost.comment = $(this).data('id')
         $('#comment-modal').modal('show')
     })
 
-    $('.like-button').click(function() {
+    $(document).on('click', '.like-button', function() {
         let action = $(this).data('action')
         let postId = $(this).data('id')
 
@@ -138,7 +138,7 @@ window.onload = function() {
         }
     })
 
-    $('.repost-button').click(function() {
+    $(document).on('click', '.repost-button', function() {
         originalPost.repost = $(this).data('id')
         $('#repost-modal').modal('show')
     })
