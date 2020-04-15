@@ -151,7 +151,8 @@ window.onload = function() {
             type: 'post',
             data: { postId: originalPost.repost },
             success: (response) => {
-                $('#posts').prepend(createPostHtml(response.post))
+                let acceptedUrls = ['/home', `/user/${response.post.reposter}`]
+                if (acceptedUrls.includes(window.location.pathname)) $('#posts').prepend(createPostHtml(response.post))
             }
         })
     })
