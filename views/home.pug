@@ -24,8 +24,11 @@ block content
 
   //- Feed
 
-  .feed#posts
-    +posts(feed)
+  .feed
+    #posts
+      +posts(feed)
+
+    .load-more#load-more(data-page=1)
 
   //- Modals
 

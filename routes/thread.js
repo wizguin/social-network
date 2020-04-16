@@ -22,5 +22,13 @@ router.get('/:thread', async function(req, res) {
     })
 })
 
+/*========== Pagination routes ==========*/
+
+router.post('/:thread/load', async function(req, res) {
+    let db = req.app.get('db')
+    let thread = await db.getThread(req.params.thread, req.session.userId, req.body.page)
+
+    res.json({ status: 200, posts: db.renderMixin('post', 'posts', thread.replies) })
+})
 
 module.exports = router

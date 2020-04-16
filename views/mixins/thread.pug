@@ -1,3 +1,7 @@
+mixin thread(thread)
+  each item in thread
+    +post(item)
+
 mixin post(post, focus=false)
 
   if focus
