@@ -165,18 +165,27 @@ window.onload = function() {
 
     /*========== Pagination ==========*/
 
-
-    $('#load-more').click(function() {
-        $.ajax({
-            url: `${window.location.pathname}/load`,
-            type: 'post',
-            data: { page: $(this).data('page') },
-            success: (response) => {
-                $('#posts').append(response.posts)
-                $(this).data().page ++
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.intersectionRatio > 0) {
+                loadMore($(entry.target))
             }
         })
     })
+
+    if ($('#load-more').length) observer.observe($('#load-more')[0])
+
+    function loadMore(page) {
+        $.ajax({
+            url: `${window.location.pathname}/load`,
+            type: 'post',
+            data: { page: page.data('page') },
+            success: (response) => {
+                $('#posts').append(response.posts)
+                page.data().page ++
+            }
+        })
+    }
 
     /*========== Functions ==========*/
 

@@ -98,7 +98,6 @@ router.post('/:username/load', async function(req, res) {
     let id = await db.usernameToId(req.params.username)
     let posts = await db.getPosts({ id: id, myId: req.session.userId }, req.body.page)
 
-    console.log(db.renderMixin('post', 'posts', posts))
     res.json({ status: 200, posts: db.renderMixin('post', 'posts', posts) })
 })
 
