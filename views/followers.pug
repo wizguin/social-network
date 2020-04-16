@@ -1,12 +1,10 @@
 extends user
 
+include mixins/followers
+
 block profileContent
 
-    .card-body.border-left.border-right
-      each item in profile.content
-        .post.container.border-bottom
-          a(href=`/user/${item.username}`)
-            .avatar-sm
-              img(src=`/images/avatar/${item.avatar}.webp`, onerror='this.src="/images/avatar/default.webp"')
-          .h6
-            a(href=`/user/${item.username}`) #{item.username}
+  #posts.card-body.border-left.border-right
+    +users(profile.content)
+
+  .load-more#load-more(data-page=1)

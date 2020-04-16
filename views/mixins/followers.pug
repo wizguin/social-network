@@ -1,0 +1,11 @@
+mixin users(users)
+  each user in users
+    +user(user)
+
+mixin user(user)
+  .post.container.border-bottom
+    a(href=`/user/${user.username}`)
+      .avatar-sm
+        img(src=`/images/avatar/${user.avatar}.webp`, onerror='this.src="/images/avatar/default.webp"')
+      .h6
+        a(href=`/user/${user.username}`) #{user.username}

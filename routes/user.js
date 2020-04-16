@@ -10,13 +10,7 @@ async function renderProfile(req, res, contentType, template = contentType, page
 
     if (!user) return res.redirect('/home')
 
-    let contentTypes = {
-        'posts': db.getPosts.bind(db),
-        'likes': db.getLikes.bind(db),
-        'followers': db.getFollowers.bind(db),
-        'following': db.getFollowings.bind(db)
-    }
-    let content = await contentTypes[contentType]({ id: user.id, myId: req.session.userId }, page)
+    let content = await getContent(db, contentType, { id: user.id, myId: req.session.userId }, page)
 
     let profile = {
         id: user.id,
@@ -39,6 +33,25 @@ async function renderProfile(req, res, contentType, template = contentType, page
     })
 }
 
+async function paginate(req, res, contentType, file, mixin) {
+    let db = req.app.get('db')
+    let id = await db.usernameToId(req.params.username)
+    let content = await getContent(db, contentType, { id: id, myId: req.session.userId }, req.body.page)
+
+    res.json({ status: 200, posts: db.renderMixin(file, mixin, content) })
+}
+
+async function getContent(db, contentType, id, page) {
+    let contentTypes = {
+        'posts': db.getPosts.bind(db),
+        'likes': db.getLikes.bind(db),
+        'followers': db.getFollowers.bind(db),
+        'following': db.getFollowings.bind(db)
+    }
+
+    return await contentTypes[contentType](id, page)
+}
+
 /*========== Get routes ==========*/
 
 router.get('/:username', function(req, res) {
@@ -54,7 +67,7 @@ router.get('/:username/followers', function(req, res) {
 })
 
 router.get('/:username/following', function(req, res) {
-    renderProfile(req, res, 'following')
+    renderProfile(req, res, 'following', 'followers')
 })
 
 /*========== Post routes ==========*/
@@ -93,25 +106,20 @@ router.post('/:username/unfollow', async function(req, res) {
 
 /*========== Pagination routes ==========*/
 
-router.post('/:username/load', async function(req, res) {
-    let db = req.app.get('db')
-    let id = await db.usernameToId(req.params.username)
-    let posts = await db.getPosts({ id: id, myId: req.session.userId }, req.body.page)
-
-    res.json({ status: 200, posts: db.renderMixin('post', 'posts', posts) })
+router.post('/:username/load', function(req, res) {
+    paginate(req, res, 'posts', 'post', 'posts')
 })
 
 router.post('/:username/likes/load', function(req, res) {
-    console.log('test2')
-    renderProfile(req, res, 'likes', 'posts')
+    paginate(req, res, 'likes', 'post', 'posts')
 })
 
 router.post('/:username/followers/load', function(req, res) {
-    renderProfile(req, res, 'followers')
+    paginate(req, res, 'followers', 'followers', 'users')
 })
 
 router.post('/:username/following/load', function(req, res) {
-    renderProfile(req, res, 'following')
+    paginate(req, res, 'following', 'followers', 'users')
 })
 
 module.exports = router
