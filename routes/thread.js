@@ -11,7 +11,7 @@ router.get('/', function(req, res) {
 })
 
 router.get('/:thread', async function(req, res) {
-    let thread = await req.app.get('db').getThread(req.params.thread, req.session.userId, 0)
+    let thread = await req.app.get('db').getThread({ id: req.params.thread, myId: req.session.userId }, 0)
 
     res.render('thread', {
         title: `${thread.focus.text}`,
@@ -26,7 +26,7 @@ router.get('/:thread', async function(req, res) {
 
 router.post('/:thread/load', async function(req, res) {
     let db = req.app.get('db')
-    let thread = await db.getThread(req.params.thread, req.session.userId, req.body.page)
+    let thread = await db.getThread({ id: req.params.thread, myId: req.session.userId }, req.body.page)
 
     res.json({ status: 200, posts: db.renderMixin('post', 'posts', thread.replies) })
 })

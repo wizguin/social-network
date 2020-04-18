@@ -5,6 +5,9 @@ mixin posts(posts)
 mixin post(post)
   - var isRepost = (post.reposter) ? true : false
   - var isReply = (post.originalPoster) ? true : false
+  - var replyCount = (post.replyCount > 0) ? post.replyCount : null
+  - var likeCount = (post.likeCount > 0) ? post.likeCount : null
+  - var repostCount = (post.repostCount > 0) ? post.repostCount : null
 
   .post.linked.container.border-bottom(data-id=post.id)
 
@@ -34,11 +37,15 @@ mixin post(post)
       tbody
         tr
           td.i.far.fa-comment.comment-button(data-id=post.id, data-toggle='modal')
+            a  #{replyCount}
           if post.isLiked
             td.i.fas.fa-heart.liked.like-button(data-id=post.id, data-action='unlike')
+              a  #{likeCount}
           else
             td.i.far.fa-heart.like-button(data-id=post.id, data-action='like')
+              a  #{likeCount}
           td.i.fas.fa-arrow-right.repost-button(data-id=post.id)
+            a  #{repostCount}
           if isRepost
             td #{post.originalTimestamp}
           else

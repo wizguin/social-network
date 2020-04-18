@@ -101,6 +101,40 @@ export default class Database {
         })
     }
 
+    getPostDetails(id, myId = 0) {
+        return this.sequelize.query(
+            queries.post, {
+                replacements: {
+                    postId: id,
+                    userId: myId
+                },
+                type: this.sequelize.QueryTypes.SELECT
+            }
+
+        ).then(async (result) => {
+            if (!result) return null
+
+            let post = result[0]
+            post.avatar = post.user_id
+            post.timestamp = this.timestampToDate(post.timestamp)
+
+            return post
+        })
+    }
+
+    async getOriginalPost(id, myId = 0) {
+        return this.replies.findOne({ where: { replyId: id } }).then(function(result) {
+            return result
+
+        }).then(async (result) => {
+            return await this.getPostDetails(result.postId, myId)
+        })
+    }
+
+    async getOriginalPoster(id) {
+        return (await this.getOriginalPost(id)).username
+    }
+
     /*========== Home page queries ==========*/
 
     async getFeed(myId, page) {
@@ -143,37 +177,25 @@ export default class Database {
         })
     }
 
-    async getOriginalPoster(id) {
-        return this.replies.findOne({ where: { replyId: id } }).then(function(result) {
-            return result
-
-        }).then(async (result) => {
-            let originalPost = await this.getPostById(result.postId)
-            return await this.idToUsername(originalPost.userId)
-        })
-    }
-
     getLikes(id, page) {
-        return this.likes.findAll({
-            limit: this.limit,
-            offset: page * this.limit,
-            where: { userId: id.id },
-            order: [['timestamp', 'DESC']]
-
-        }).then(async (result) => {
-            let likes = []
-
-            for (let like of result) {
-                let post = await this.getPostById(like.postId)
-
-                if (post) {
-                    let user = await this.getUserById(post.userId)
-
-                    likes.push(await this.createPostObj(user, post, id.myId))
-                }
+        return this.sequelize.query(
+            queries.likes, {
+                replacements: {
+                    profileId: id.id,
+                    userId: id.myId,
+                    limit: this.limit,
+                    offset: page * this.limit
+                },
+                type: this.sequelize.QueryTypes.SELECT
             }
 
-            return likes
+        ).then(async (result) => {
+            for (let post of result) {
+                post.avatar = post.user_id
+                post.timestamp = this.timestampToDate(post.timestamp)
+            }
+
+            return result
         })
     }
 
@@ -245,38 +267,35 @@ export default class Database {
 
     /*========== Threads ==========*/
 
-    async getThread(id, myId, page) {
-        let thread = { replyTo: null }
-        let focus = await this.getPostById(id)
-        let focusPoster = await this.getUserById(focus.userId)
-        let isReply = await this.isReply(id)
+    async getThread(id, page) {
+        let thread = {}
 
-        if (isReply) {
-            let originalPost = await this.getPostById(isReply.postId)
-            let originalPoster = await this.getUserById(originalPost.userId)
-            thread.replyTo = await this.createPostObj(originalPoster, originalPost, myId)
-        }
+        thread.focus = await this.getPostDetails(id.id)
+        if (thread.focus.isReply) thread.replyTo = await this.getOriginalPost(id.id, id.myId)
+        thread.replies = await this.getReplies(id, page)
 
-        thread.focus = await this.createPostObj(focusPoster, focus, myId)
+        return thread
+    }
 
-        return this.replies.findAll({
-            limit: this.limit,
-            offset: page * this.limit,
-            where: { postId: id },
-            order: [['timestamp', 'DESC']]
-
-        }).then(async (result) => {
-            let replies = []
-
-            for (let reply of result) {
-                let post = await this.getPostById(reply.replyId)
-                let poster = await this.getUserById(post.userId)
-
-                replies.push(await this.createPostObj(poster, post, myId))
+    async getReplies(id, page) {
+        return this.sequelize.query(
+            queries.replies, {
+                replacements: {
+                    threadId: id.id,
+                    userId: id.myId,
+                    limit: this.limit,
+                    offset: page * this.limit
+                },
+                type: this.sequelize.QueryTypes.SELECT
             }
 
-            thread.replies = replies
-            return thread
+        ).then(async (result) => {
+            for (let post of result) {
+                post.avatar = post.user_id
+                post.timestamp = this.timestampToDate(post.timestamp)
+            }
+
+            return result
         })
     }
 
