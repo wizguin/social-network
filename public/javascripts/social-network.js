@@ -174,7 +174,10 @@ window.onload = function() {
 
         $.ajax({
             url: '/settings/delete',
-            type: 'post'
+            type: 'post',
+            success: () => {
+                window.location.href = '/logout'
+            }
         })
     })
 

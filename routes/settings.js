@@ -117,7 +117,13 @@ router.post('/update-bio', [
 })
 
 router.post('/delete', function(req, res) {
-    res.redirect('/logout')
+    req.app.get('db').users.destroy({
+        where: {
+            id: req.session.userId,
+        }
+    })
+
+    res.sendStatus(200)
 })
 
 module.exports = router
