@@ -116,4 +116,8 @@ router.post('/update-bio', [
     res.redirect('/settings')
 })
 
+router.post('/delete', function(req, res) {
+    res.redirect('/logout')
+})
+
 module.exports = router

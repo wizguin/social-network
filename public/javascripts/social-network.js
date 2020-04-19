@@ -163,6 +163,21 @@ window.onload = function() {
         })
     })
 
+    /*========== Settings page handlers  ==========*/
+
+    $('#del-account').click(function() {
+        $('#del-account-modal').modal('show')
+    })
+
+    $('#del-account-confirm').click(function() {
+        $('#repost-modal').modal('hide')
+
+        $.ajax({
+            url: '/settings/delete',
+            type: 'post'
+        })
+    })
+
     /*========== Pagination ==========*/
 
     const observer = new IntersectionObserver((entries, observer) => {

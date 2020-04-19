@@ -29,3 +29,18 @@ mixin repostModal()
 
         .modal-body
           button#repost-confirm.btn.btn-primary(type='button') Repost
+
+mixin delAccountModal()
+  #del-account-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='label', aria-hidden='true')
+
+    .modal-dialog(role='document')
+
+      .modal-content
+
+        .modal-header
+          h5#label.modal-title Confirm Account Deletion
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') ×
+
+        .modal-body
+          button#del-account-confirm.btn.btn-primary(type='button') Delete My Account

@@ -1,5 +1,7 @@
 extends layout
 
+include mixins/modals
+
 block content
 
   .settings-container
@@ -39,3 +41,7 @@ block content
 
     a(href='/logout')
       button.btn.btn-danger.btn-lg.mt-3(type='button') Log Out
+
+    button#del-account.btn.btn-danger.btn-lg.mt-3(type='button') Delete Account
+
+  +delAccountModal
