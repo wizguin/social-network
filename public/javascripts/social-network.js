@@ -10,6 +10,10 @@ window.onload = function() {
         '#comment-form': true
     }
 
+    $('#dropdown').click(function(event) {
+        event.stopPropagation();
+    })
+
     /*========== Profile page handlers ==========*/
 
     $('#profile-follow-button').click(function() {

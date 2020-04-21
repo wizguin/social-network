@@ -299,6 +299,38 @@ export default class Database {
         })
     }
 
+    /*========== Search ==========*/
+
+    async searchPosts(search, myId, page, followingsOnly) {
+        let replacements = {
+            search: `%${search}%`,
+            userId: myId,
+            limit: this.limit,
+            offset: page * this.limit
+        }
+
+        let filter = (followingsOnly) ? true : false
+        if (filter) replacements.followings = await this.getFollowingsList(myId)
+        let query = (filter) ? queries.searchFollowings : queries.search
+
+        return this.sequelize.query(
+            query, {
+                replacements,
+                type: this.sequelize.QueryTypes.SELECT
+            }
+
+        ).then(async (result) => {
+            for (let post of result) {
+                post.avatar = post.user_id
+                post.timestamp = this.timestampToDate(post.timestamp)
+                if (post.originalTimestamp) post.originalTimestamp = this.timestampToDate(post.originalTimestamp)
+                if (post.isReply) post.originalPoster = await this.getOriginalPoster(post.id)
+            }
+
+            return result
+        })
+    }
+
     /*========== Helper functions ==========*/
 
     getTimestamp() {

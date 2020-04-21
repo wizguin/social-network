@@ -1,0 +1,19 @@
+extends layout
+
+include mixins/post
+include mixins/modals
+
+block content
+
+  //- Results
+
+  .results
+    #posts
+      +posts(results)
+
+    .load-more#load-more(data-page=1)
+
+  //- Modals
+
+  +commentModal()
+  +repostModal()

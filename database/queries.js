@@ -76,3 +76,30 @@ export const replies =
     FROM posts as p
     WHERE id IN (SELECT reply_id FROM replies WHERE post_id = :threadId)
     ORDER BY timestamp DESC LIMIT :limit OFFSET :offset;`
+
+// Search results
+
+export const search =
+    `SELECT p.*,
+
+    ${username}
+    ${isLiked}
+    ${isReply}
+    ${counts}
+
+    FROM posts as p
+    WHERE text LIKE :search
+    ORDER BY timestamp DESC LIMIT :limit OFFSET :offset;`
+
+export const searchFollowings =
+    `SELECT p.*,
+
+    ${username}
+    ${isLiked}
+    ${isReply}
+    ${counts}
+
+    FROM posts as p
+    WHERE text LIKE :search
+    AND user_id IN (:followings)
+    ORDER BY timestamp DESC LIMIT :limit OFFSET :offset;`

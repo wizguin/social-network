@@ -21,8 +21,22 @@ html
             a.nav-link(href='/') Home
           li.nav-item
             a.nav-link(href=`/user/${myUsername}`) Profile
-        form.form-inline.my-2.my-lg-0
-          input.form-control.mr-sm-2(type='search' placeholder='Search' aria-label='Search')
-          button.btn.btn-success.my-2.my-sm-0(type='submit') Go!
+
+        //- Search bar
+
+        form.form-inline.my-2.my-lg-0(action='/search', id='search-form', method='get')
+          .input-group
+
+            .input-group-prepend
+              button.btn.btn-outline-secondary.dropdown-toggle.i.fas.fa-cog(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+              .dropdown-menu#dropdown
+                a.dropdown-item(href='#')
+                  .custom-control.custom-checkbox
+                    input#checkbox4.custom-control-input(type='checkbox', name='followingsOnly')
+                    label.custom-control-label(for='checkbox4') Followings Only
+
+            input.form-control(type='search', placeholder='Search', aria-label='Search', name='search')
+            .input-group-append
+              button.btn.btn-success.my-2.my-sm-0(type='submit') Go!
 
     block content

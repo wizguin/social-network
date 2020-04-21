@@ -15,6 +15,7 @@ import settingsRouter from './routes/settings'
 import logutRouter from './routes/logout'
 import postRouter from './routes/post'
 import threadRouter from './routes/thread'
+import searchRouter from './routes/search'
 
 // Database
 import Database from './database/Database'
@@ -90,6 +91,7 @@ app.use('/logout', isLoggedIn, logutRouter)
 app.use('/register', isLoggedOut, registerRouter)
 app.use('/post', isLoggedIn, postRouter)
 app.use('/thread', isLoggedIn, threadRouter)
+app.use('/search', isLoggedIn, searchRouter)
 
 
 // Catch 404 and forward to error handler
