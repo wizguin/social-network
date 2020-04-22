@@ -299,6 +299,14 @@ export default class Database {
         })
     }
 
+    async getReplyIds(id) {
+        return this.replies.findAll({ where: { postId: id } }).then(async (result) => {
+            return result.map(function(reply) {
+                return reply.replyId
+            })
+        })
+    }
+
     /*========== Search ==========*/
 
     async searchPosts(search, myId, page, followingsOnly) {

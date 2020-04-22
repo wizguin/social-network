@@ -11,6 +11,9 @@ mixin post(post)
 
   .post.linked.container.border-bottom(data-id=post.id)
 
+    if post.isMyPost
+      p.del-post-button.i.fas.fa-times(data-id=post.id)
+
     if isRepost
       p.repost-text
         i.fas.fa-arrow-right
@@ -36,7 +39,7 @@ mixin post(post)
     table.post-buttons
       tbody
         tr
-          td.i.far.fa-comment.comment-button(data-id=post.id, data-toggle='modal')
+          td.i.far.fa-comment.comment-button(data-id=post.id)
             a  #{replyCount}
           if post.isLiked
             td.i.fas.fa-heart.liked.like-button(data-id=post.id, data-action='unlike')

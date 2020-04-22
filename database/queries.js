@@ -1,6 +1,7 @@
 const username = `(SELECT username FROM users WHERE id = p.user_id) as username,`
 const isLiked = `CASE WHEN EXISTS (SELECT * FROM likes WHERE user_id = :userId AND post_id = p.id) THEN 1 ELSE 0 END AS isLiked,`
 const isReply = `CASE WHEN EXISTS (SELECT * FROM replies WHERE reply_id = p.id) THEN 1 ELSE 0 END AS isReply,`
+const isMyPost = `CASE WHEN EXISTS (SELECT * FROM posts WHERE user_id = :userId AND id = p.id) THEN 1 ELSE 0 END AS isMyPost,`
 const counts =
     `(SELECT COUNT(*) FROM replies WHERE post_id = p.id) AS replyCount,
     (SELECT COUNT(*) FROM likes WHERE post_id = p.id) AS likeCount,
@@ -17,6 +18,7 @@ export const posts =
             ${username}
             ${isLiked}
             ${isReply}
+            ${isMyPost}
             ${counts}
 
         FROM posts AS p WHERE user_id IN (:profileId)
@@ -30,6 +32,7 @@ export const posts =
             ${username}
             ${isLiked}
             0 as isReply,
+            ${isMyPost}
             ${counts}
 
         FROM posts AS p
@@ -45,6 +48,7 @@ export const likes =
     (SELECT timestamp from likes WHERE post_id = p.id AND user_id = :profileId) AS likedTimestamp,
     ${username}
     ${isLiked}
+    ${isMyPost}
     ${counts}
 
     FROM posts as p
@@ -59,6 +63,7 @@ export const post =
     ${username}
     ${isLiked}
     ${isReply}
+    ${isMyPost}
     ${counts}
 
     FROM posts as p
@@ -71,6 +76,7 @@ export const replies =
 
     ${username}
     ${isLiked}
+    ${isMyPost}
     ${counts}
 
     FROM posts as p
@@ -85,6 +91,7 @@ export const search =
     ${username}
     ${isLiked}
     ${isReply}
+    ${isMyPost}
     ${counts}
 
     FROM posts as p
@@ -97,6 +104,7 @@ export const searchFollowings =
     ${username}
     ${isLiked}
     ${isReply}
+    ${isMyPost}
     ${counts}
 
     FROM posts as p

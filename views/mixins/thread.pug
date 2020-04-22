@@ -5,6 +5,7 @@ mixin thread(thread)
 mixin post(post, focus=false)
 
   if focus
+    p #{post.isMyPost}
     .thread-focus(data-id=post.id)
       .post.linked.focus.container
         +postBody(post)
@@ -17,6 +18,9 @@ mixin postBody(post)
   - var replyCount = (post.replyCount > 0) ? post.replyCount : null
   - var likeCount = (post.likeCount > 0) ? post.likeCount : null
   - var repostCount = (post.repostCount > 0) ? post.repostCount : null
+
+  if post.isMyPost
+    .del-post-button.i.fas.fa-times(data-id=post.id)
 
   a(href=`/user/${post.username}`)
     .avatar-sm

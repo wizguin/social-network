@@ -2,7 +2,8 @@ window.onload = function() {
 
     let originalPost = {
         comment: '',
-        repost: ''
+        repost: '',
+        toDelete: ''
     }
 
     let button = {
@@ -108,7 +109,7 @@ window.onload = function() {
     })
 
     // Stops post buttons directing to thread
-    $(document).on('click', '.post .post-buttons', function(event) {
+    $(document).on('click', '.post .post-buttons, .del-post-button', function(event) {
         event.stopPropagation()
     })
 
@@ -163,6 +164,26 @@ window.onload = function() {
             success: (response) => {
                 let acceptedUrls = ['/home', `/user/${response.reposter}`]
                 if (acceptedUrls.includes(window.location.pathname)) $('#posts').prepend(response.post)
+            }
+        })
+    })
+
+    $(document).on('click', '.del-post-button', function() {
+        originalPost.toDelete = $(this).data('id')
+        $('#del-post-modal').modal('show')
+    })
+
+    $('#del-post-confirm').click(function() {
+        $('#del-post-modal').modal('hide')
+
+        $.ajax({
+            url: '/post/delete',
+            type: 'post',
+            data: { postId: originalPost.toDelete },
+            success: (response) => {
+                for (let post of response.posts) {
+                    $(`[data-id="${post}"]`).remove()
+                }
             }
         })
     })

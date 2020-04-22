@@ -9,6 +9,13 @@ const mimeTypes = {
     'image/png': '.png',
     'image/gif': '.gif'
 }
+const checkPostId = [
+    check('postId')
+        .trim()
+        .escape()
+        .isLength({ min: 1 })
+        .isNumeric()
+]
 
 function uploadImage(req, res) {
     let image = req.files.image
@@ -27,6 +34,22 @@ function uploadImage(req, res) {
     })
 
     return id
+}
+
+async function deletePost(req, res) {
+    let db = req.app.get('db')
+    let postId = req.body.postId
+
+    let posts = ([postId]).concat(await db.getReplyIds(postId))
+
+    console.log(posts)
+
+    db.posts.destroy({
+        where: {
+            id: posts
+        }
+    })
+    res.json({status: 200, posts: posts })
 }
 
 /*========== Get routes ==========*/
@@ -102,14 +125,7 @@ router.post('/comment', [
     res.json({ status: 200, post: db.renderMixin('post', 'post', postObj) })
 })
 
-router.post('/like', [
-    check('postId')
-        .trim()
-        .escape()
-        .isLength({ min: 1 })
-        .isNumeric()
-
-], function(req, res) {
+router.post('/like', checkPostId, function(req, res) {
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
@@ -122,14 +138,7 @@ router.post('/like', [
     res.sendStatus(200)
 })
 
-router.post('/unlike', [
-    check('postId')
-        .trim()
-        .escape()
-        .isLength({ min: 1 })
-        .isNumeric()
-
-], function(req, res) {
+router.post('/unlike', checkPostId, function(req, res) {
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
@@ -142,14 +151,7 @@ router.post('/unlike', [
     res.sendStatus(200)
 })
 
-router.post('/repost', [
-    check('postId')
-        .trim()
-        .escape()
-        .isLength({ min: 1 })
-        .isNumeric()
-
-], async function(req, res) {
+router.post('/repost', checkPostId, async function(req, res) {
     let errors = validationResult(req)
     if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
 
@@ -167,6 +169,13 @@ router.post('/repost', [
     postObj.reposter = (await db.getUserById(req.session.userId)).username
 
     res.json({status: 200, post: db.renderMixin('post', 'post', postObj), reposter: postObj.reposter })
+})
+
+router.post('/delete', checkPostId, function(req, res) {
+    let errors = validationResult(req)
+    if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
+
+    deletePost(req, res)
 })
 
 module.exports = router

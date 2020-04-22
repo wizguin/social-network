@@ -96,6 +96,8 @@ hr {
     display: none;
 }
 
+/* Posts */
+
 .post:not(.focus) {
     padding: 15px;
     margin-top: 0px;
@@ -175,19 +177,29 @@ hr {
     text-align: right;
 }
 
-.comment-button:hover,
-.repost-button:hover {
+.comment-button,
+.repost-button,
+.like-button,
+.del-post-button {
     cursor: pointer;
+}
+
+.comment-button:hover,
+.repost-button:hover,
+.del-post-button:hover {
     color: #007bff;
 }
 
 .like-button:hover {
-    cursor: pointer;
     color: #bd1f1f;
 }
 
 .liked {
     color: #bd1f1f;
+}
+
+.del-post-button {
+    float: right;
 }
 
 /* Feed */
