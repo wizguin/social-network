@@ -31,7 +31,7 @@ mixin post(post)
     .h6
       a(href=`/user/${post.username}`) #{post.username}
 
-    p #{post.text}
+    p!= post.text
     if post.image
       .post-image
         img(src=`/images/upload/${post.image}.webp`)

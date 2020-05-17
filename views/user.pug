@@ -30,7 +30,7 @@ block content
 
     #profile-sidebar
 
-      p #{profile.bio}
+      p!= profile.bio
 
       //- The user will be able to make posts from their own profile page
       if isMyUser
