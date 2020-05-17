@@ -88,6 +88,12 @@ router.post('/update-email', [
         .isLength({ min: 1, max: 254 })
         .isEmail()
         .normalizeEmail()
+        // Checking if email address already exists in the database
+        .custom(function(value, {req}) {
+            return req.app.get('db').getUserByEmail(value).then(function(user) {
+                if (user) return Promise.reject('That email address is already in use.')
+            })
+        })
 
 ], function(req, res) {
     let errors = validationResult(req)
