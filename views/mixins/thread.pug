@@ -5,7 +5,6 @@ mixin thread(thread)
 mixin post(post, focus=false)
 
   if focus
-    p #{post.isMyPost}
     .thread-focus(data-id=post.id)
       .post.linked.focus.container
         +postBody(post)

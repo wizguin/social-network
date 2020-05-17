@@ -81,7 +81,7 @@ router.post('/new', [
     if (req.files) p.image = uploadImage(req, res)
 
     let post = await db.posts.create(p)
-    let postObj = await db.createPostObj(await db.getUserById(req.session.userId), post, req.session.userId)
+    let postObj = await db.getPostDetails(post.id, req.session.userId)
 
     res.json({ status: 200, post: db.renderMixin('post', 'post', postObj) })
 })
@@ -111,8 +111,9 @@ router.post('/comment', [
     }
 
     if (req.files) p.image = uploadImage(req, res)
+
     let post = await db.posts.create(p)
-    let postObj = await db.createPostObj(await db.getUserById(req.session.userId), post, req.session.userId)
+    let postObj = await db.getPostDetails(post.id, req.session.userId)
 
     await db.replies.create({
         postId: req.body.originalPost,
