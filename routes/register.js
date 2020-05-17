@@ -12,6 +12,7 @@ router.get('/', function(req, res) {
 
 router.post('/', [
     check('username', 'Enter a username (1-12 characters).')
+        .matches(/^[a-zA-Z0-9_-]+$/).withMessage('Username can only include A-Z, 0-9, -,  or _.')
         .trim()
         .escape()
         .isLength({ min: 1, max: 12 })
