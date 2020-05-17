@@ -394,4 +394,8 @@ export default class Database {
         return pug.compile(code, { filename: 'tmp.pug' } )({ args: args })
     }
 
+    sendAlert(req, res, type, message) {
+        res.json({ status: 200, alert: req.app.get('db').renderMixin('alerts', type, message) })
+    }
+
 }

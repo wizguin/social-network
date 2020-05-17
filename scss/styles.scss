@@ -20,6 +20,8 @@ $yiq-contrasted-threshold: 0;
 $border-radius: 0.5rem;
 $card-height: 100px;
 
+$zindex-fixed: 2000;
+
 @import 'node_modules/bootstrap/scss/bootstrap';
 
 body {
@@ -134,6 +136,7 @@ hr {
     margin-left: 100px;
     margin-top: 4px;
     margin-bottom: 4px;
+    word-break: break-all;
 }
 
 .post-image {
@@ -311,6 +314,7 @@ hr {
     float: left;
     margin-top: 60px;
     width: 200px;
+    word-break: break-all;
 }
 
 /* Mobile scaling */

@@ -69,9 +69,10 @@ router.post('/new', [
 
 ], async function(req, res) {
     let errors = validationResult(req)
-    if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
-
     let db = req.app.get('db')
+
+    if (!errors.isEmpty()) return db.sendAlert(req, res, 'danger', errors.array()[0].msg)
+
     let p = {
         userId: req.session.userId,
         text: req.body.postText,
@@ -101,9 +102,10 @@ router.post('/comment', [
 
 ], async function(req, res) {
     let errors = validationResult(req)
-    if (!errors.isEmpty()) return res.send(errors.array()[0].msg)
-
     let db = req.app.get('db')
+
+    if (!errors.isEmpty()) return db.sendAlert(req, res, 'danger', errors.array()[0].msg)
+
     let p = {
         userId: req.session.userId,
         text: req.body.postText,

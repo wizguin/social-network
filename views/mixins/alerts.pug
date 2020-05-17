@@ -1,0 +1,13 @@
+mixin alertsContainer()
+  #alerts-container.container.fixed-top
+
+mixin danger(message)
+  .alert.alert-danger.alert-dismissible
+    button.close(type='button', data-dismiss='alert') ×
+    | #{message}
+
+
+mixin success(message)
+  .alert.alert-success.alert-dismissible
+    button.close(type='button', data-dismiss='alert') ×
+    | #{message}

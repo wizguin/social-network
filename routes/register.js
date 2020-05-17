@@ -50,15 +50,15 @@ router.post('/', [
 
 ], function(req, res) {
     let errors = validationResult(req)
+    let db = req.app.get('db')
 
     // Return error messages to the user
-    if (!errors.isEmpty()) return res.render('register', { title: 'Sign Up', error: errors.array()[0].msg })
+    if (!errors.isEmpty()) return db.sendAlert(req, res, 'danger', errors.array()[0].msg)
 
     // Create new user if form validates successfully
     bcrypt.hash(req.body.password, saltRounds, function(error, hash) {
-        if (error) return res.render('register', { title: 'Sign Up', error: error })
+        if (error) return db.sendAlert(req, res, 'danger', 'There was an error.')
 
-        let db = req.app.get('db')
         db.users.create({
             username: req.body.username,
             email:  req.body.email,
@@ -66,7 +66,7 @@ router.post('/', [
             registrationTimestamp: db.getTimestamp()
         })
 
-        res.render('register', { title: 'Sign Up', newAccount: true })
+        db.sendAlert(req, res, 'success', 'Account created successfully.')
     })
 
 })

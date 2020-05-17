@@ -1,3 +1,5 @@
+include mixins/alerts
+
 doctype html
 html
 
@@ -6,11 +8,12 @@ html
     link(rel='stylesheet', href='/css/styles.css')
     script(src='/javascripts/jquery-3.4.1.min.js')
     script(src='/javascripts/bootstrap.min.js')
+    script(src='/javascripts/social-network.js')
 
   body
     .login-container
       h1 Login
-      form.mt-4(action='/login', method='post')
+      form.mt-4(action='/login', method='post', id='login-form')
         .form-group
           input.form-control(type='text', placeholder='Username', name='username')
         .form-group
@@ -18,8 +21,4 @@ html
         button.btn.btn-primary.btn-lg(type='submit') Login
         a(href='register') Need an account? Sign up.
 
-        if error
-          .alert.alert-danger.mt-3(role='alert')
-            | #{error}
-
-
+    +alertsContainer()

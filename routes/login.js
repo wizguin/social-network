@@ -27,18 +27,20 @@ router.post('/', [
 
 ], async function(req, res) {
     let errors = validationResult(req)
-    if (!errors.isEmpty()) return res.render('login', { title: 'Login', error: errors.array()[0].msg })
+    let db = req.app.get('db')
 
-    let user = await req.app.get('db').getUserByUsername(req.body.username)
+    if (!errors.isEmpty()) return db.sendAlert(req, res, 'danger', errors.array()[0].msg)
+
+    let user = await db.getUserByUsername(req.body.username)
 
     bcrypt.compare(req.body.password, user.password, function(error, result) {
-        if (error || !result) return res.render('login', { title: 'Login', error: 'Incorrect password.' })
+        if (error || !result) return db.sendAlert(req, res, 'danger', 'Incorrect Password.')
 
         // Set sesion variables
         req.session.userId = user.id
         req.session.username = user.username
 
-        res.redirect('/home')
+        res.json({ status: 200, success: true })
     })
 })
 

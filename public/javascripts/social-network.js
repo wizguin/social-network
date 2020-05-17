@@ -15,6 +15,23 @@ window.onload = function() {
         event.stopPropagation();
     })
 
+    /*========== Login and registration handlers ==========*/
+
+    $('#login-form').submit(async function(event) {
+        let response = await ajaxFormCall(event, this)
+
+        if (response.alert) {
+            showAlert(response.alert)
+        } else if (response.success) {
+            window.location.href = '/'
+        }
+    })
+
+    $('#register-form').submit(async function(event) {
+        let response = await ajaxFormCall(event, this)
+        if (response.alert) showAlert(response.alert)
+    })
+
     /*========== Profile page handlers ==========*/
 
     $('#profile-follow-button').click(function() {
@@ -57,46 +74,38 @@ window.onload = function() {
     $('#post-form .image-form').change(function() { toggleImageButton('#post-form') })
     $('#comment-form .image-form').change(function() { toggleImageButton('#comment-form') })
 
-    $('#post-form').submit(function(event) {
-        event.preventDefault()
+    $('#post-form').submit(async function(event) {
+        let response = await ajaxFormCall(event, this)
 
-        $.ajax({
-            url: $(this).attr('action'),
-            type: $(this).attr('method'),
-            data: new FormData(this),
-            processData: false,
-            contentType: false,
-            success: (response) => {
-                resetForm('#post-form', $(this)[0])
-                $('#posts').prepend(response.post)
-            }
-        })
+        if (response.alert) {
+            showAlert(response.alert)
+        } else if (response.post) {
+            resetForm('#post-form', $(this)[0])
+            $('#posts').prepend(response.post)
+        }
     })
 
-    $('#comment-form').submit(function(event) {
-        event.preventDefault()
-        $('#comment-modal').modal('hide')
-
+    $('#comment-form').submit(async function(event) {
         let formData = new FormData(this)
         formData.append('originalPost', originalPost.comment)
 
-        $.ajax({
-            url: $(this).attr('action'),
-            type: $(this).attr('method'),
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: (response) => {
-                resetForm('#comment-form', $(this)[0])
+        let response = await ajaxFormCall(event, this, formData)
 
-                if (window.location.pathname.startsWith('/thread')) {
-                    response.post.originalPoster = null
-                    if (window.location.pathname.split('/')[2] != originalPost.comment) return
-                }
+        console.log(response)
+        if (response.alert) {
+            showAlert(response.alert)
 
-                $('#posts').prepend(response.post)
+        } else if (response.post) {
+            $('#comment-modal').modal('hide')
+            resetForm('#comment-form', $(this)[0])
+
+            if (window.location.pathname.startsWith('/thread')) {
+                response.post.originalPoster = null
+                if (window.location.pathname.split('/')[2] != originalPost.comment) return
             }
-        })
+
+            $('#posts').prepend(response.post)
+        }
     })
 
     /*========== Post handlers ==========*/
@@ -190,6 +199,16 @@ window.onload = function() {
 
     /*========== Settings page handlers  ==========*/
 
+    $('#update-password').submit(function(event) { updateSetting(event, this) })
+
+    $('#update-email').submit(function(event) { updateSetting(event, this) })
+
+    $('#update-avatar').submit(function(event) { updateSetting(event, this) })
+
+    $('#update-header').submit(function(event) { updateSetting(event, this) })
+
+    $('#update-bio').submit(function(event) { updateSetting(event, this) })
+
     $('#del-account').click(function() {
         $('#del-account-modal').modal('show')
     })
@@ -205,6 +224,11 @@ window.onload = function() {
             }
         })
     })
+
+    async function updateSetting(event, element) {
+        let response = await ajaxFormCall(event, element)
+        if (response.alert) showAlert(response.alert)
+    }
 
     /*========== Pagination ==========*/
 
@@ -250,6 +274,23 @@ window.onload = function() {
         $(`${form} .image-button i`).toggleClass('fas fa-times')
     }
 
+    async function ajaxFormCall(event, element, formData = new FormData(element))  {
+        event.preventDefault()
+
+        let result = $.ajax({
+            url: $(element).attr('action'),
+            type: $(element).attr('method'),
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: (response) => {
+                return response
+            }
+        })
+
+        return result
+    }
+
     function resetForm(formId, form) {
         form.reset()
         button[formId] = true
@@ -259,6 +300,11 @@ window.onload = function() {
         $(`${formId} .image-button`).removeClass('btn-danger')
         $(`${formId} .image-button i`).addClass('far fa-image')
         $(`${formId} .image-button i`).removeClass('fas fa-times')
+    }
+
+    function showAlert(alert) {
+        $('#alerts-container').prepend(alert)
+        $('#alerts-container').children().first().delay(3500).fadeOut(300);
     }
 
 }

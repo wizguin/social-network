@@ -12,23 +12,22 @@ const mimeTypes = {
 }
 
 function uploadImage(req, res, type) {
+    let db = req.app.get('db')
+    if (!req.files || !req.files[type]) return db.sendAlert(req, res, 'danger', `Please select a file.`)
+
     let image = req.files[type]
 
-    if (!req.files ||
-        Object.keys(req.files).length === 0 ||
-        !(image.mimetype in mimeTypes)) {
-            return res.redirect('/settings')
+    if (!req.files || Object.keys(req.files).length === 0 || !(image.mimetype in mimeTypes)) {
+        return db.sendAlert(req, res, 'danger', `There was an error updating your ${type}.`)
     }
 
-    //let id = uuidv4()
-    //let type = mimeTypes[image.mimetype]
     let path = `public/images/${type}/${req.session.userId}.webp`
 
     image.mv(path, function(err) {
-        if (err) return console.log(err)
+        if (err) return db.sendAlert(req, res, 'danger', `There was an error updating your ${type}.`)
     })
 
-    res.redirect('/settings')
+    db.sendAlert(req, res, 'success', `Your ${type} was updated successfully.`)
 }
 
 /*========== Get routes ==========*/
@@ -66,17 +65,19 @@ router.post('/update-password', [
 
 ], function(req, res) {
     let errors = validationResult(req)
-    if (!errors.isEmpty()) return console.log(errors.array()[0].msg)
+    let db = req.app.get('db')
+
+    if (!errors.isEmpty()) return db.sendAlert(req, res, 'danger', errors.array()[0].msg)
 
     bcrypt.hash(req.body.password, saltRounds, function(error, hash) {
-        if (error) return res.redirect('/settings')
+        if (error) return db.sendAlert(req, res, 'danger', 'There was an error updating your password.')
 
-        req.app.get('db').users.update(
+        db.users.update(
             { password: hash },
             { where: { id: req.session.userId }
         })
 
-        res.redirect('/settings')
+        db.sendAlert(req, res, 'success', 'Password updated successfully.')
     })
 })
 
@@ -90,13 +91,16 @@ router.post('/update-email', [
 
 ], function(req, res) {
     let errors = validationResult(req)
-    if (!errors.isEmpty()) return res.redirect('/settings')
+    let db = req.app.get('db')
 
-    req.app.get('db').users.update(
+    if (!errors.isEmpty()) return db.sendAlert(req, res, 'danger', errors.array()[0].msg)
+
+    db.users.update(
         { email: req.body.email },
         { where: { id: req.session.userId }
     })
-    res.redirect('/settings')
+
+    db.sendAlert(req, res, 'success', 'Email updated successfully.')
 })
 
 router.post('/update-bio', [
@@ -107,13 +111,16 @@ router.post('/update-bio', [
 
 ], function(req, res) {
     let errors = validationResult(req)
-    if (!errors.isEmpty()) return res.redirect('/settings')
+    let db = req.app.get('db')
 
-    req.app.get('db').users.update(
+    if (!errors.isEmpty()) return db.sendAlert(req, res, 'danger', errors.array()[0].msg)
+
+    db.users.update(
         { bio: req.body.bio },
         { where: { id: req.session.userId }
     })
-    res.redirect('/settings')
+
+    db.sendAlert(req, res, 'success', 'Bio updated successfully.')
 })
 
 router.post('/delete', function(req, res) {
