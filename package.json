@@ -6,7 +6,7 @@
     "dev": "nodemon --exec babel-node ./bin/www.js"
   },
   "dependencies": {
-    "bcrypt": "^3.0.8",
+    "bcrypt": "^5.0.0",
     "bootstrap": "^4.4.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
